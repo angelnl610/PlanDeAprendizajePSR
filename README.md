@@ -17,7 +17,7 @@ Para utilizar este proyecto se debe clonar el repositorio y configurar las depen
 Clonar el repositorio desde Github Desktop o ejecutar en la terminal:
 
 ```bash
-git clone URL_DEL_REPOSITORIO
+git clone https://github.com/angelnl610/PlanDeAprendizajePSR.git
 ```
 
 Ingresar al directorio del proyecto:
