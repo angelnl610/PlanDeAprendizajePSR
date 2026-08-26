@@ -1,6 +1,5 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using PizzaPlanetaApi.Modelos.Entidades;
 
 namespace PizzaPlanetaApi.Datos.Config;
 

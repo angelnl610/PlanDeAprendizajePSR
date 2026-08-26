@@ -1,0 +1,10 @@
+namespace PizzaPlanetaBiblioteca.Enums;
+
+public enum EstadoPedido
+{
+    Pendiente = 1,
+    EnPreparacion = 2,
+    EnCamino = 3,
+    Entregado = 4,
+    Cancelado = 5
+}

@@ -1,0 +1,39 @@
+{
+  "runtimeTarget": {
+    "name": ".NETCoreApp,Version=v10.0",
+    "signature": ""
+  },
+  "compilationOptions": {},
+  "targets": {
+    ".NETCoreApp,Version=v10.0": {
+      "PizzaPlanetMVC/1.0.0": {
+        "dependencies": {
+          "PizzaPlanetBiblioteca": "1.0.0"
+        },
+        "runtime": {
+          "PizzaPlanetMVC.dll": {}
+        }
+      },
+      "PizzaPlanetBiblioteca/1.0.0": {
+        "runtime": {
+          "PizzaPlanetBiblioteca.dll": {
+            "assemblyVersion": "1.0.0.0",
+            "fileVersion": "1.0.0.0"
+          }
+        }
+      }
+    }
+  },
+  "libraries": {
+    "PizzaPlanetMVC/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "PizzaPlanetBiblioteca/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    }
+  }
+}
