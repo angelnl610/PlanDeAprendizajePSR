@@ -1,5 +1,5 @@
 {
-  "version": 4,
+  "version": 3,
   "targets": {
     "net10.0": {
       "Humanizer.Core/2.14.1": {
@@ -732,6 +732,16 @@
         },
         "build": {
           "buildTransitive/net6.0/_._": {}
+        }
+      },
+      "PizzaPlanetBiblioteca/1.0.0": {
+        "type": "project",
+        "framework": ".NETCoreApp,Version=v10.0",
+        "compile": {
+          "bin/placeholder/PizzaPlanetBiblioteca.dll": {}
+        },
+        "runtime": {
+          "bin/placeholder/PizzaPlanetBiblioteca.dll": {}
         }
       }
     }
@@ -2454,6 +2464,11 @@
         "system.composition.typedparts.nuspec",
         "useSharedDesignerContext.txt"
       ]
+    },
+    "PizzaPlanetBiblioteca/1.0.0": {
+      "type": "project",
+      "path": "../PizzaPlanetBiblioteca/PizzaPlanetBiblioteca.csproj",
+      "msbuildProject": "../PizzaPlanetBiblioteca/PizzaPlanetBiblioteca.csproj"
     }
   },
   "projectFileDependencyGroups": {
@@ -2461,43 +2476,41 @@
       "Microsoft.AspNetCore.OpenApi >= 10.0.8",
       "Microsoft.EntityFrameworkCore >= 9.0.0",
       "Microsoft.EntityFrameworkCore.Design >= 9.0.0",
+      "PizzaPlanetBiblioteca >= 1.0.0",
       "Pomelo.EntityFrameworkCore.MySql >= 9.0.0",
       "Swashbuckle.AspNetCore >= 10.2.3"
     ]
   },
   "packageFolders": {
-    "C:\\Users\\Lenovo\\.nuget\\packages\\": {},
-    "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages": {}
+    "/home/et12alumno/.nuget/packages/": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "E:\\ReposSi\\PlanAprendizaje\\PizzaPlanetaApi\\PizzaPlanetaApi.csproj",
+      "projectUniqueName": "/mnt/Datos/Repos/PlanDeAprendizajePSR/PizzaPlanetaApi/PizzaPlanetaApi.csproj",
       "projectName": "PizzaPlanetaApi",
-      "projectPath": "E:\\ReposSi\\PlanAprendizaje\\PizzaPlanetaApi\\PizzaPlanetaApi.csproj",
-      "packagesPath": "C:\\Users\\Lenovo\\.nuget\\packages\\",
-      "outputPath": "E:\\ReposSi\\PlanAprendizaje\\PizzaPlanetaApi\\obj\\",
+      "projectPath": "/mnt/Datos/Repos/PlanDeAprendizajePSR/PizzaPlanetaApi/PizzaPlanetaApi.csproj",
+      "packagesPath": "/home/et12alumno/.nuget/packages/",
+      "outputPath": "/mnt/Datos/Repos/PlanDeAprendizajePSR/PizzaPlanetaApi/obj/",
       "projectStyle": "PackageReference",
-      "fallbackFolders": [
-        "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
-      ],
       "configFilePaths": [
-        "C:\\Users\\Lenovo\\AppData\\Roaming\\NuGet\\NuGet.Config",
-        "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
-        "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+        "/home/et12alumno/.nuget/NuGet/NuGet.Config"
       ],
       "originalTargetFrameworks": [
         "net10.0"
       ],
       "sources": {
-        "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+        "/usr/lib/dotnet/library-packs": {},
         "https://api.nuget.org/v3/index.json": {}
       },
       "frameworks": {
         "net10.0": {
-          "framework": "net10.0",
           "targetAlias": "net10.0",
-          "projectReferences": {}
+          "projectReferences": {
+            "/mnt/Datos/Repos/PlanDeAprendizajePSR/PizzaPlanetBiblioteca/PizzaPlanetBiblioteca.csproj": {
+              "projectPath": "/mnt/Datos/Repos/PlanDeAprendizajePSR/PizzaPlanetBiblioteca/PizzaPlanetBiblioteca.csproj"
+            }
+          }
         }
       },
       "warningProperties": {
@@ -2510,11 +2523,10 @@
         "auditLevel": "low",
         "auditMode": "all"
       },
-      "SdkAnalysisLevel": "10.0.300"
+      "SdkAnalysisLevel": "10.0.100"
     },
     "frameworks": {
       "net10.0": {
-        "framework": "net10.0",
         "targetAlias": "net10.0",
         "dependencies": {
           "Microsoft.AspNetCore.OpenApi": {
@@ -2559,7 +2571,7 @@
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\10.0.300/PortableRuntimeIdentifierGraph.json",
+        "runtimeIdentifierGraphPath": "/usr/lib/dotnet/sdk/10.0.108/PortableRuntimeIdentifierGraph.json",
         "packagesToPrune": {
           "Microsoft.AspNetCore": "(,10.0.32767]",
           "Microsoft.AspNetCore.Antiforgery": "(,10.0.32767]",

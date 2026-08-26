@@ -1,7 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using PizzaPlanetaApi.Datos;
-using PizzaPlanetaApi.Modelos.DTOs.Clientes;
-using PizzaPlanetaApi.Modelos.Entidades;
+
 
 namespace PizzaPlanetaApi.Endpoints;
 

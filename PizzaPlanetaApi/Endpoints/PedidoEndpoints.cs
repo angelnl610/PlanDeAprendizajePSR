@@ -1,8 +1,5 @@
 using Microsoft.EntityFrameworkCore;
 using PizzaPlanetaApi.Datos;
-using PizzaPlanetaApi.Modelos.DTOs.Pedidos;
-using PizzaPlanetaApi.Modelos.Entidades;
-using PizzaPlanetaApi.Modelos.Enums;
 
 namespace PizzaPlanetaApi.Endpoints;
 

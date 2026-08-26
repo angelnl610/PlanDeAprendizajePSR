@@ -1,3 +1,5 @@
 <Solution>
   <Project Path="PizzaPlanetaApi/PizzaPlanetaApi.csproj" />
+  <Project Path="PizzaPlanetBiblioteca/PizzaPlanetBiblioteca.csproj" />
+  <Project Path="PizzaPlanetMVC/PizzaPlanetMVC.csproj" />
 </Solution>

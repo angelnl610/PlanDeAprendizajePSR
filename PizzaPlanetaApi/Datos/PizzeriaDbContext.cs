@@ -1,5 +1,4 @@
 using Microsoft.EntityFrameworkCore;
-using PizzaPlanetaApi.Modelos.Entidades;
 
 namespace PizzaPlanetaApi.Datos;
 
