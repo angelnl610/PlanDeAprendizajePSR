@@ -1,0 +1,21 @@
+@model PizzaPlanetMVC.Models.PizzaItemViewModel
+
+<div class="col-12 col-md-6 col-lg-4 mb-4">
+    <article class="pizza-card" data-pizza-id="@Model.Id">
+        <div class="pizza-card-img-wrap">
+            <img src="@Model.ImagenUrl" 
+                 alt="@Model.Nombre" 
+                 class="pizza-card-img" 
+                 loading="lazy" 
+                 onerror="this.onerror=null; this.src='/images/pizzas/pizza-default.png';" />
+        </div>
+        <div class="pizza-card-body">
+            <h3 class="pizza-card-title">@Model.Nombre</h3>
+            <p class="pizza-card-description">@Model.Descripcion</p>
+            <div class="pizza-card-footer">
+                <span class="cosmic-price-label">COSMIC PRICE</span>
+                <span class="cosmic-price-value">@Model.PrecioFormateado</span>
+            </div>
+        </div>
+    </article>
+</div>
