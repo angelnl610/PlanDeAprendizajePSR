@@ -1,6 +1,377 @@
-﻿@{
-    ViewData["Title"] = "Pizzas";
+@model PizzaPlanetMVC.Models.PizzaCatalogoViewModel
+@{
+    ViewData["Title"] = "Catálogo Galáctico de Pizzas";
 }
-<h1>@ViewData["Title"]</h1>
 
-<p>La data de las pizzas.</p>
+<section class="products-section pt-4">
+    <div class="container">
+        <!-- CABECERA DE PÁGINA Y BOTÓN DE ALTA -->
+        <div class="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center gap-3 mb-4">
+            <div>
+                <div class="d-flex align-items-center gap-2 mb-2">
+                    <a asp-controller="Home" asp-action="Index" class="btn-arcade-outline py-1 px-3 fs-7" title="Volver a la portada">
+                        ◀ INICIO
+                    </a>
+                    <span class="arcade-badge mb-0">SECTOR DE PRODUCTOS REST</span>
+                </div>
+                <h1 class="section-header-title mb-1">CATÁLOGO DE PIZZAS</h1>
+                <p class="section-header-subtitle mb-0">
+                    Telemetría en tiempo real desde la estación central. Ingredientes cósmicos horneados a velocidad warp.
+                </p>
+            </div>
+            <div>
+                <button type="button" 
+                        class="btn-arcade-primary py-2 px-3 text-nowrap" 
+                        data-bs-toggle="modal" 
+                        data-bs-target="#modalCrearPizza"
+                        id="btnAbrirCrearPizza">
+                    🛸 + NUEVA PIZZA EN ÓRBITA
+                </button>
+            </div>
+        </div>
+
+        <!-- NOTIFICACIONES FLASH DE OPERACIONES CRUD -->
+        @if (TempData["MensajeExito"] != null)
+        {
+            <div class="arcade-terminal-success mb-4 alert alert-dismissible fade show" role="alert">
+                <div class="d-flex align-items-center gap-2">
+                    <span class="fs-5">📡</span>
+                    <div>
+                        <strong class="font-monospace text-success">[ TRANSMISIÓN EXITOSA ]</strong>
+                        <div class="text-white">@TempData["MensajeExito"]</div>
+                    </div>
+                </div>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="alert" aria-label="Cerrar"></button>
+            </div>
+        }
+
+        @if (TempData["MensajeError"] != null)
+        {
+            <div class="arcade-terminal-alert mb-4 alert alert-dismissible fade show" role="alert">
+                <div class="d-flex align-items-center gap-2">
+                    <span class="fs-5">⚠</span>
+                    <div>
+                        <strong class="font-monospace text-danger">[ ALERTA DE SISTEMA ]</strong>
+                        <div class="text-white">@TempData["MensajeError"]</div>
+                    </div>
+                </div>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="alert" aria-label="Cerrar"></button>
+            </div>
+        }
+
+        <!-- PANEL DE CONTROL HUD -->
+        <div class="hud-panel">
+            <form asp-controller="Home" asp-action="Pizzas" method="get" id="hudForm">
+                <div class="row g-3 align-items-end">
+                    <div class="col-md-6 col-lg-5">
+                        <label asp-for="SearchTerm" class="hud-label">
+                            [ BUSCADOR RECEPTOR ]
+                        </label>
+                        <div class="input-group">
+                            <span class="input-group-text bg-dark border-secondary text-success font-monospace">⌕</span>
+                            <input asp-for="SearchTerm" 
+                                   class="form-control hud-input" 
+                                   placeholder="Buscar por nombre o descripción..." />
+                        </div>
+                    </div>
+
+                    <div class="col-md-4 col-lg-4">
+                        <label asp-for="SortOrder" class="hud-label">
+                            [ TELEMETRÍA DE COSTOS ]
+                        </label>
+                        <select asp-for="SortOrder" class="form-select hud-select" onchange="document.getElementById('hudForm').submit();">
+                            <option value="">Ordenar por precio</option>
+                            <option value="asc">Menor a mayor [▲]</option>
+                            <option value="desc">Mayor a menor [▼]</option>
+                        </select>
+                    </div>
+
+                    <div class="col-md-2 col-lg-3 d-flex gap-2">
+                        <button type="submit" class="btn-arcade-primary py-2 px-3 flex-grow-1" title="Ejecutar búsqueda">
+                            FILTRAR
+                        </button>
+                        @if (!string.IsNullOrWhiteSpace(Model.SearchTerm) || !string.IsNullOrWhiteSpace(Model.SortOrder))
+                        {
+                            <a asp-controller="Home" asp-action="Pizzas" class="btn-hud-reset" title="Restablecer filtros">
+                                ↺ RESET
+                            </a>
+                        }
+                    </div>
+                </div>
+            </form>
+        </div>
+
+        <!-- MENSAJE DE ERROR DE CONEXIÓN CON LA API -->
+        @if (Model.HasError)
+        {
+            <div class="arcade-terminal-alert mb-5 text-center">
+                <h4 class="text-danger font-monospace mb-2">⚠ TRANSMISIÓN INTERRUMPIDA</h4>
+                <p class="mb-3 text-white">@Model.ErrorMessage</p>
+                <a asp-controller="Home" asp-action="Pizzas" class="btn-arcade-primary py-2 px-4">
+                    REINTENTAR ENLACE
+                </a>
+            </div>
+        }
+
+        <!-- CONTENEDOR SKELETON LOADING (Mostrado durante el submit del HUD) -->
+        <div id="skeletonLoadingContainer" class="row d-none">
+            <partial name="_PizzaSkeletonCard" />
+            <partial name="_PizzaSkeletonCard" />
+            <partial name="_PizzaSkeletonCard" />
+            <partial name="_PizzaSkeletonCard" />
+            <partial name="_PizzaSkeletonCard" />
+            <partial name="_PizzaSkeletonCard" />
+        </div>
+
+        <!-- GRILLA DE PIZZAS OBTENIDAS DE LA API -->
+        <div id="pizzasGridContainer">
+            @if (Model.Pizzas.Any())
+            {
+                <div class="row">
+                    @foreach (var pizza in Model.Pizzas)
+                    {
+                        <partial name="_PizzaCard" model="pizza" />
+                    }
+                </div>
+            }
+            else if (!Model.HasError)
+            {
+                <div class="text-center py-5">
+                    <div class="display-3 mb-3">🌌</div>
+                    <h3 class="font-monospace text-warning">NO SE DETECTARON PIZZAS</h3>
+                    <p class="text-muted font-monospace">
+                        No hay variedades que coincidan con los parámetros de telemetría ingresados.
+                    </p>
+                    <a asp-controller="Home" asp-action="Pizzas" class="btn-arcade-primary mt-2">
+                        VER TODAS LAS PIZZAS
+                    </a>
+                </div>
+            }
+        </div>
+    </div>
+</section>
+
+<!-- ==========================================
+     MODAL CREAR PIZZA
+     ========================================== -->
+<div class="modal fade" id="modalCrearPizza" tabindex="-1" aria-labelledby="modalCrearPizzaLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content modal-arcade">
+            <div class="modal-header border-bottom border-success">
+                <h5 class="modal-title font-arcade text-success" id="modalCrearPizzaLabel">
+                    🛸 NUEVA PIZZA EN EL REACTOR
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+            </div>
+            <form asp-controller="Home" asp-action="CrearPizza" method="post">
+                @Html.AntiForgeryToken()
+                <div class="modal-body py-4">
+                    <div class="mb-3">
+                        <label for="crearNombre" class="hud-label">NOMBRE DE LA VARIEDAD</label>
+                        <input type="text" 
+                               name="Nombre" 
+                               id="crearNombre" 
+                               class="form-control hud-input" 
+                               placeholder="Ej: Cometa Hawaiano" 
+                               maxlength="100" 
+                               required />
+                    </div>
+                    <div class="mb-3">
+                        <label for="crearDescripcion" class="hud-label">DESCRIPCIÓN DE INGREDIENTES</label>
+                        <textarea name="Descripcion" 
+                                  id="crearDescripcion" 
+                                  class="form-control hud-input" 
+                                  rows="3" 
+                                  placeholder="Detalla los componentes cósmicos y salsas estelares..." 
+                                  maxlength="300" 
+                                  required></textarea>
+                    </div>
+                    <div class="mb-3">
+                        <label for="crearPrecio" class="hud-label">PRECIO CÓSMICO ($)</label>
+                        <input type="number" 
+                               name="Precio" 
+                               id="crearPrecio" 
+                               class="form-control hud-input font-monospace" 
+                               step="0.01" 
+                               min="0.01" 
+                               placeholder="15.50" 
+                               required />
+                    </div>
+                    <div class="mb-2">
+                        <label for="crearImagenUrl" class="hud-label">URL PÚBLICA DE LA IMAGEN (OPCIONAL)</label>
+                        <input type="url" 
+                               name="ImagenUrl" 
+                               id="crearImagenUrl" 
+                               class="form-control hud-input font-monospace" 
+                               placeholder="https://images.unsplash.com/..." 
+                               maxlength="500" />
+                    </div>
+                </div>
+                <div class="modal-footer border-top border-secondary">
+                    <button type="button" class="btn-arcade-outline py-2 px-3" data-bs-dismiss="modal">
+                        CANCELAR
+                    </button>
+                    <button type="submit" class="btn-arcade-primary py-2 px-3">
+                        + INICIAR COCCIÓN
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- ==========================================
+     MODAL EDITAR PIZZA
+     ========================================== -->
+<div class="modal fade" id="modalEditarPizza" tabindex="-1" aria-labelledby="modalEditarPizzaLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content modal-arcade">
+            <div class="modal-header border-bottom border-warning">
+                <h5 class="modal-title font-arcade text-warning" id="modalEditarPizzaLabel">
+                    ⚙️ MODIFICAR PARÁMETROS
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+            </div>
+            <form asp-controller="Home" asp-action="EditarPizza" method="post" id="formEditarPizza">
+                @Html.AntiForgeryToken()
+                <input type="hidden" name="id" id="editarPizzaId" />
+                <div class="modal-body py-4">
+                    <div class="mb-3">
+                        <label for="editarPizzaNombre" class="hud-label">NOMBRE DE LA VARIEDAD</label>
+                        <input type="text" 
+                               name="Nombre" 
+                               id="editarPizzaNombre" 
+                               class="form-control hud-input" 
+                               maxlength="100" 
+                               required />
+                    </div>
+                    <div class="mb-3">
+                        <label for="editarPizzaDescripcion" class="hud-label">DESCRIPCIÓN DE INGREDIENTES</label>
+                        <textarea name="Descripcion" 
+                                  id="editarPizzaDescripcion" 
+                                  class="form-control hud-input" 
+                                  rows="3" 
+                                  maxlength="300" 
+                                  required></textarea>
+                    </div>
+                    <div class="mb-3">
+                        <label for="editarPizzaPrecio" class="hud-label">PRECIO CÓSMICO ($)</label>
+                        <input type="number" 
+                               name="Precio" 
+                               id="editarPizzaPrecio" 
+                               class="form-control hud-input font-monospace" 
+                               step="0.01" 
+                               min="0.01" 
+                               required />
+                    </div>
+                    <div class="mb-2">
+                        <label for="editarPizzaImagenUrl" class="hud-label">URL PÚBLICA DE LA IMAGEN (OPCIONAL)</label>
+                        <input type="url" 
+                               name="ImagenUrl" 
+                               id="editarPizzaImagenUrl" 
+                               class="form-control hud-input font-monospace" 
+                               placeholder="https://images.unsplash.com/..." 
+                               maxlength="500" />
+                    </div>
+                </div>
+                <div class="modal-footer border-top border-secondary">
+                    <button type="button" class="btn-arcade-outline py-2 px-3" data-bs-dismiss="modal">
+                        CANCELAR
+                    </button>
+                    <button type="submit" class="btn-arcade-primary py-2 px-3">
+                        GUARDAR CAMBIOS
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- ==========================================
+     MODAL ELIMINAR PIZZA
+     ========================================== -->
+<div class="modal fade" id="modalEliminarPizza" tabindex="-1" aria-labelledby="modalEliminarPizzaLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content modal-arcade border-danger">
+            <div class="modal-header border-bottom border-danger">
+                <h5 class="modal-title font-arcade text-danger" id="modalEliminarPizzaLabel">
+                    ⚠️ CONFIRMAR BAJA ESTELAR
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+            </div>
+            <form asp-controller="Home" asp-action="EliminarPizza" method="post" id="formEliminarPizza">
+                @Html.AntiForgeryToken()
+                <input type="hidden" name="id" id="eliminarPizzaId" />
+                <div class="modal-body py-4 text-center">
+                    <div class="display-5 mb-3">💥</div>
+                    <p class="text-white mb-2 fs-6">
+                        ¿Confirma la desintegración de la pizza <strong id="eliminarPizzaNombre" class="text-warning font-monospace"></strong>?
+                    </p>
+                    <p class="text-muted font-monospace small mb-0">
+                        Esta acción retirará la receta del catálogo de la base de datos de la estación central.
+                    </p>
+                </div>
+                <div class="modal-footer border-top border-secondary justify-content-center">
+                    <button type="button" class="btn-arcade-outline py-2 px-3" data-bs-dismiss="modal">
+                        ABORTAR
+                    </button>
+                    <button type="submit" class="btn-arcade-danger py-2 px-4">
+                        DESINTEGRAR PIZZA
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        // Animación de Skeleton Loading al filtrar
+        const hudForm = document.getElementById('hudForm');
+        const skeletonContainer = document.getElementById('skeletonLoadingContainer');
+        const pizzasGridContainer = document.getElementById('pizzasGridContainer');
+
+        if (hudForm && skeletonContainer && pizzasGridContainer) {
+            hudForm.addEventListener('submit', function () {
+                pizzasGridContainer.classList.add('d-none');
+                skeletonContainer.classList.remove('d-none');
+            });
+        }
+
+        // Poblado dinámico del modal de edición
+        const modalEditarPizza = document.getElementById('modalEditarPizza');
+        if (modalEditarPizza) {
+            modalEditarPizza.addEventListener('show.bs.modal', function (event) {
+                const button = event.relatedTarget;
+                if (!button) return;
+
+                const id = button.getAttribute('data-id');
+                const nombre = button.getAttribute('data-nombre');
+                const descripcion = button.getAttribute('data-descripcion');
+                const precio = button.getAttribute('data-precio');
+                const imagenUrl = button.getAttribute('data-imagen-url');
+
+                document.getElementById('editarPizzaId').value = id || '';
+                document.getElementById('editarPizzaNombre').value = nombre || '';
+                document.getElementById('editarPizzaDescripcion').value = descripcion || '';
+                document.getElementById('editarPizzaPrecio').value = precio || '';
+                document.getElementById('editarPizzaImagenUrl').value = imagenUrl || '';
+            });
+        }
+
+        // Poblado dinámico del modal de eliminación
+        const modalEliminarPizza = document.getElementById('modalEliminarPizza');
+        if (modalEliminarPizza) {
+            modalEliminarPizza.addEventListener('show.bs.modal', function (event) {
+                const button = event.relatedTarget;
+                if (!button) return;
+
+                const id = button.getAttribute('data-id');
+                const nombre = button.getAttribute('data-nombre');
+
+                document.getElementById('eliminarPizzaId').value = id || '';
+                document.getElementById('eliminarPizzaNombre').textContent = `"${nombre || ''}"`;
+            });
+        }
+    </script>
+}

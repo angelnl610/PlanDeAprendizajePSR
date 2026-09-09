@@ -1,5 +1,6 @@
 using System.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
+using PizzaPlanetaBiblioteca.DTOs.Pizzas;
 using PizzaPlanetMVC.Models;
 using PizzaPlanetMVC.Services;
 
@@ -17,7 +18,13 @@ public class HomeController : Controller
     }
 
     [HttpGet]
-    public async Task<IActionResult> Index([FromQuery] string? searchTerm, [FromQuery] string? sortOrder)
+    public IActionResult Index()
+    {
+        return View();
+    }
+
+    [HttpGet]
+    public async Task<IActionResult> Pizzas([FromQuery] string? searchTerm, [FromQuery] string? sortOrder)
     {
         var viewModel = new PizzaCatalogoViewModel
         {
@@ -27,7 +34,7 @@ public class HomeController : Controller
 
         try
         {
-            // Consulta 100% asíncrona a la API
+            // Consulta 100% asíncrona a la API REST
             var pizzasDto = await _pizzaApiService.ObtenerPizzasAsync();
 
             var query = pizzasDto.AsEnumerable();
@@ -55,7 +62,7 @@ public class HomeController : Controller
                 Nombre = p.Nombre,
                 Descripcion = p.Descripcion,
                 Precio = p.Precio,
-                ImagenUrl = PizzaItemViewModel.ResolverImagen(p.Nombre)
+                ImagenUrl = p.ImagenUrl
             }).ToList();
         }
         catch (Exception ex)
@@ -66,6 +73,75 @@ public class HomeController : Controller
         }
 
         return View(viewModel);
+    }
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> CrearPizza(CrearPizzaDto dto)
+    {
+        if (string.IsNullOrWhiteSpace(dto.Nombre) || dto.Precio <= 0)
+        {
+            TempData["MensajeError"] = "Parámetros inválidos para crear la pizza espacial.";
+            return RedirectToAction(nameof(Pizzas));
+        }
+
+        var exito = await _pizzaApiService.CrearPizzaAsync(dto);
+        if (exito)
+        {
+            TempData["MensajeExito"] = $"¡Pizza '{dto.Nombre}' incorporada al catálogo galáctico con éxito!";
+        }
+        else
+        {
+            TempData["MensajeError"] = "No se pudo crear la pizza en la estación central. Intente nuevamente.";
+        }
+
+        return RedirectToAction(nameof(Pizzas));
+    }
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> EditarPizza(int id, ActualizarPizzaDto dto)
+    {
+        if (id <= 0 || string.IsNullOrWhiteSpace(dto.Nombre) || dto.Precio <= 0)
+        {
+            TempData["MensajeError"] = "Parámetros inválidos para actualizar la pizza espacial.";
+            return RedirectToAction(nameof(Pizzas));
+        }
+
+        var exito = await _pizzaApiService.ActualizarPizzaAsync(id, dto);
+        if (exito)
+        {
+            TempData["MensajeExito"] = $"¡Parámetros de la pizza '{dto.Nombre}' actualizados con éxito!";
+        }
+        else
+        {
+            TempData["MensajeError"] = $"No se pudo actualizar la pizza con ID #{id} en la API.";
+        }
+
+        return RedirectToAction(nameof(Pizzas));
+    }
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> EliminarPizza(int id)
+    {
+        if (id <= 0)
+        {
+            TempData["MensajeError"] = "Identificador de pizza inválido para dar de baja.";
+            return RedirectToAction(nameof(Pizzas));
+        }
+
+        var exito = await _pizzaApiService.EliminarPizzaAsync(id);
+        if (exito)
+        {
+            TempData["MensajeExito"] = $"¡La pizza con ID #{id} ha sido dada de baja del sector interestelar!";
+        }
+        else
+        {
+            TempData["MensajeError"] = $"No se pudo dar de baja la pizza #{id}. Verifique si posee pedidos asociados en el reactor.";
+        }
+
+        return RedirectToAction(nameof(Pizzas));
     }
 
     [HttpGet]

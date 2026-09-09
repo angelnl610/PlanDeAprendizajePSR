@@ -1,4 +1,3 @@
-@model PizzaPlanetMVC.Models.PizzaCatalogoViewModel
 @{
     ViewData["Title"] = "Puesto Galáctico de Pizzas";
 }
@@ -17,14 +16,14 @@
                     PIZZA<br />PLANETA
                 </h1>
                 <p class="hero-description">
-                    Bienvenido al puesto de comida más salvaje de la galaxia. Nuestras pizzas son horneadas en reactores nucleares y entregadas a velocidad warp. ¡Prepara tus propulsores!
+                    Bienvenido al puesto de comida más salvaje de la galaxia. Nuestras pizzas son horneadas en reactores nucleares y entregadas a velocidad warp. ¡Prepara tus propulsores para la mejor experiencia culinaria cósmica!
                 </p>
                 <div class="hero-buttons justify-content-center justify-content-lg-start">
-                    <a href="#pizzas-sector" class="btn-arcade-primary">
-                        VER PIZZAS
+                    <a asp-controller="Home" asp-action="Pizzas" class="btn-arcade-primary">
+                        🚀 VER CATÁLOGO DE PIZZAS
                     </a>
                     <a href="http://localhost:5272/swagger" target="_blank" class="btn-arcade-outline">
-                        SOPORTE DE CONTROL
+                        ⚙ SOPORTE DE CONTROL (API)
                     </a>
                 </div>
             </div>
@@ -58,123 +57,4 @@
         </div>
     </div>
 </div>
-
-<!-- ==========================================
-     CATALOG SECTION & HUD CONTROLS
-     ========================================== -->
-<section id="pizzas-sector" class="products-section">
-    <div class="container">
-        <div class="text-center text-md-start">
-            <h2 class="section-header-title">CUPONES &amp; REPOSTERÍA DEL SECTOR</h2>
-            <p class="section-header-subtitle">
-                Elige tu combustible galáctico favorito. Elaborado con ingredientes 100% orgánicos de la Nebulosa de Orión y servido dinámicamente desde la API.
-            </p>
-        </div>
-
-        <!-- PANEL DE CONTROL HUD -->
-        <div class="hud-panel">
-            <form asp-controller="Home" asp-action="Index" method="get" id="hudForm">
-                <div class="row g-3 align-items-end">
-                    <div class="col-md-6 col-lg-5">
-                        <label asp-for="SearchTerm" class="hud-label">
-                            [ BUSCADOR RECEPTOR ]
-                        </label>
-                        <div class="input-group">
-                            <span class="input-group-text bg-dark border-secondary text-success font-monospace">⌕</span>
-                            <input asp-for="SearchTerm" 
-                                   class="form-control hud-input" 
-                                   placeholder="Buscar por nombre o ingrediente..." />
-                        </div>
-                    </div>
-
-                    <div class="col-md-4 col-lg-4">
-                        <label asp-for="SortOrder" class="hud-label">
-                            [ TELEMETRÍA DE COSTOS ]
-                        </label>
-                        <select asp-for="SortOrder" class="form-select hud-select" onchange="document.getElementById('hudForm').submit();">
-                            <option value="">Ordenar por precio</option>
-                            <option value="asc">Menor a mayor [▲]</option>
-                            <option value="desc">Mayor a menor [▼]</option>
-                        </select>
-                    </div>
-
-                    <div class="col-md-2 col-lg-3 d-flex gap-2">
-                        <button type="submit" class="btn-arcade-primary py-2 px-3 flex-grow-1" title="Ejecutar búsqueda">
-                            FILTRAR
-                        </button>
-                        @if (!string.IsNullOrWhiteSpace(Model.SearchTerm) || !string.IsNullOrWhiteSpace(Model.SortOrder))
-                        {
-                            <a asp-controller="Home" asp-action="Index" class="btn-hud-reset" title="Restablecer filtros">
-                                ↺ RESET
-                            </a>
-                        }
-                    </div>
-                </div>
-            </form>
-        </div>
-
-        <!-- MENSAJE DE ERROR O ADVERTENCIA -->
-        @if (Model.HasError)
-        {
-            <div class="arcade-terminal-alert mb-5 text-center">
-                <h4 class="text-danger font-monospace mb-2">⚠ TRANSMISIÓN INTERRUMPIDA</h4>
-                <p class="mb-3 text-white">@Model.ErrorMessage</p>
-                <a asp-controller="Home" asp-action="Index" class="btn-arcade-primary py-2 px-4">
-                    REINTENTAR ENLACE
-                </a>
-            </div>
-        }
-
-        <!-- CONTENEDOR SKELETON LOADING (Mostrado durante carga asíncrona) -->
-        <div id="skeletonLoadingContainer" class="row d-none">
-            <partial name="_PizzaSkeletonCard" />
-            <partial name="_PizzaSkeletonCard" />
-            <partial name="_PizzaSkeletonCard" />
-            <partial name="_PizzaSkeletonCard" />
-            <partial name="_PizzaSkeletonCard" />
-            <partial name="_PizzaSkeletonCard" />
-        </div>
-
-        <!-- GRILLA DE PIZZAS OBTENIDAS DE LA API -->
-        <div id="pizzasGridContainer">
-            @if (Model.Pizzas.Any())
-            {
-                <div class="row">
-                    @foreach (var pizza in Model.Pizzas)
-                    {
-                        <partial name="_PizzaCard" model="pizza" />
-                    }
-                </div>
-            }
-            else if (!Model.HasError)
-            {
-                <div class="text-center py-5">
-                    <div class="display-3 mb-3">🌌</div>
-                    <h3 class="font-monospace text-warning">NO SE DETECTARON PIZZAS</h3>
-                    <p class="text-muted font-monospace">
-                        No hay resultados para los parámetros de búsqueda ingresados.
-                    </p>
-                    <a asp-controller="Home" asp-action="Index" class="btn-arcade-primary mt-2">
-                        VER TODAS LAS PIZZAS
-                    </a>
-                </div>
-            }
-        </div>
-    </div>
 </section>
-
-@section Scripts {
-    <script>
-        // Animación suave de Skeleton Loading al interactuar con el HUD
-        const hudForm = document.getElementById('hudForm');
-        const skeletonContainer = document.getElementById('skeletonLoadingContainer');
-        const pizzasGridContainer = document.getElementById('pizzasGridContainer');
-
-        if (hudForm && skeletonContainer && pizzasGridContainer) {
-            hudForm.addEventListener('submit', function () {
-                pizzasGridContainer.classList.add('d-none');
-                skeletonContainer.classList.remove('d-none');
-            });
-        }
-    </script>
-}

@@ -381,16 +381,79 @@ body {
   border-color: #33ff85;
 }
 
+.pizza-card-header {
+  padding: 0.8rem 1.2rem;
+  border-bottom: 1px solid rgba(0, 255, 102, 0.2);
+  background: rgba(0, 0, 0, 0.35);
+}
+
+.pizza-badge-id {
+  font-family: var(--font-hud);
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--neon-cyan);
+  letter-spacing: 1.5px;
+}
+
+.btn-card-menu {
+  background: transparent;
+  border: 1px solid rgba(0, 255, 102, 0.3);
+  color: var(--neon-green);
+  font-size: 1.2rem;
+  line-height: 1;
+  padding: 2px 8px;
+  border-radius: 4px;
+  transition: all 0.2s ease;
+  cursor: pointer;
+}
+
+.btn-card-menu:hover,
+.btn-card-menu:focus {
+  background: rgba(0, 255, 102, 0.2);
+  border-color: var(--neon-green);
+  box-shadow: 0 0 10px var(--neon-green-glow);
+  color: #fff;
+}
+
+/* DROPDOWN ARCADE */
+.dropdown-arcade {
+  background-color: #0c0d20 !important;
+  border: 2px solid var(--neon-green) !important;
+  border-radius: 6px !important;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.8), 0 0 15px rgba(0, 255, 102, 0.25) !important;
+  padding: 0.4rem 0 !important;
+  z-index: 1050 !important;
+}
+
+.dropdown-arcade .dropdown-item {
+  font-family: var(--font-hud) !important;
+  font-size: 0.85rem !important;
+  color: var(--text-main) !important;
+  padding: 0.5rem 1rem !important;
+  transition: all 0.15s ease !important;
+  background: transparent !important;
+}
+
+.dropdown-arcade .dropdown-item:hover {
+  background-color: rgba(0, 255, 102, 0.18) !important;
+  color: var(--neon-green) !important;
+}
+
+.dropdown-arcade .dropdown-item.text-danger:hover {
+  background-color: rgba(255, 51, 102, 0.18) !important;
+  color: var(--neon-red) !important;
+}
+
 .pizza-card-img-wrap {
   width: 100%;
-  aspect-ratio: 1 / 1;
+  height: 190px;
   background: #060612;
   position: relative;
   overflow: hidden;
   display: flex;
   align-items: center;
   justify-content: center;
-  border-bottom: 2px solid var(--neon-red);
+  border-bottom: 2px solid var(--neon-green);
 }
 
 .pizza-card-img {
@@ -401,7 +464,7 @@ body {
 }
 
 .pizza-card:hover .pizza-card-img {
-  transform: scale(1.05);
+  transform: scale(1.06);
 }
 
 .pizza-card-body {
@@ -570,4 +633,113 @@ body {
   font-family: var(--font-hud);
   color: #fff;
   box-shadow: 0 0 20px var(--neon-red-glow);
+}
+
+.arcade-terminal-success {
+  background: rgba(0, 255, 102, 0.1);
+  border: 2px solid var(--neon-green);
+  border-radius: 6px;
+  padding: 1.2rem 1.5rem;
+  font-family: var(--font-hud);
+  color: #fff;
+  box-shadow: 0 0 20px var(--neon-green-glow);
+}
+
+/* ========================================================
+   DANGER BUTTON (TERMINATE / DELETE)
+   ======================================================== */
+.btn-arcade-danger {
+  font-family: var(--font-arcade);
+  font-size: 0.88rem;
+  font-weight: 800;
+  letter-spacing: 1px;
+  color: #fff;
+  background-color: var(--neon-red);
+  border: 2px solid var(--neon-red);
+  border-radius: 4px;
+  padding: 10px 22px;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 0 16px var(--neon-red-glow);
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  text-transform: uppercase;
+  cursor: pointer;
+}
+
+.btn-arcade-danger:hover {
+  background-color: #ff5c85;
+  color: #fff;
+  box-shadow: 0 0 26px rgba(255, 51, 102, 0.8), 0 4px 12px rgba(0,0,0,0.5);
+  transform: translateY(-2px);
+}
+
+/* ========================================================
+   MODALS ARCADE
+   ======================================================== */
+.modal-arcade {
+  background: var(--bg-space-card) !important;
+  border: 2px solid var(--neon-green) !important;
+  border-radius: 8px !important;
+  box-shadow: 0 0 35px rgba(0, 255, 102, 0.25), 0 10px 40px rgba(0, 0, 0, 0.9) !important;
+  color: var(--text-main) !important;
+}
+
+.modal-arcade.border-danger {
+  border-color: var(--neon-red) !important;
+  box-shadow: 0 0 35px rgba(255, 51, 102, 0.25), 0 10px 40px rgba(0, 0, 0, 0.9) !important;
+}
+
+.modal-arcade .modal-header {
+  background: rgba(0, 0, 0, 0.4);
+  padding: 1.2rem 1.5rem;
+}
+
+.modal-arcade .modal-body {
+  padding: 1.5rem;
+}
+
+.modal-arcade .modal-footer {
+  background: rgba(0, 0, 0, 0.3);
+  padding: 1rem 1.5rem;
+}
+
+/* ========================================================
+   LANDING / TELEMETRY FEATURE CARDS
+   ======================================================== */
+.telemetry-feature-card {
+  background: var(--bg-space-card);
+  border: 1px solid rgba(0, 255, 102, 0.3);
+  border-radius: 8px;
+  padding: 2rem 1.6rem;
+  height: 100%;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
+}
+
+.telemetry-feature-card:hover {
+  border-color: var(--neon-green);
+  box-shadow: 0 0 25px rgba(0, 255, 102, 0.25);
+  transform: translateY(-4px);
+}
+
+.feature-icon {
+  font-size: 2.2rem;
+}
+
+.feature-title {
+  font-family: var(--font-arcade);
+  font-size: 1.05rem;
+  font-weight: 800;
+  color: var(--neon-green);
+  margin-bottom: 0.8rem;
+  letter-spacing: 0.5px;
+}
+
+.feature-desc {
+  font-size: 0.88rem;
+  line-height: 1.55;
+  color: var(--text-muted-space);
+  margin: 0;
 }

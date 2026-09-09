@@ -2,13 +2,55 @@
 
 <div class="col-12 col-md-6 col-lg-4 mb-4">
     <article class="pizza-card" data-pizza-id="@Model.Id">
-        <div class="pizza-card-img-wrap">
-            <img src="@Model.ImagenUrl" 
-                 alt="@Model.Nombre" 
-                 class="pizza-card-img" 
-                 loading="lazy" 
-                 onerror="this.onerror=null; this.src='/images/pizzas/pizza-default.png';" />
+        <div class="pizza-card-header d-flex justify-content-between align-items-center">
+            <span class="pizza-badge-id">SECTOR-@Model.Id.ToString("D2")</span>
+            <div class="dropdown">
+                <button class="btn-card-menu" 
+                        type="button" 
+                        id="menuPizza-@Model.Id" 
+                        data-bs-toggle="dropdown" 
+                        aria-expanded="false" 
+                        title="Opciones de administración">
+                    &#8942;
+                </button>
+                <ul class="dropdown-menu dropdown-menu-end dropdown-arcade" aria-labelledby="menuPizza-@Model.Id">
+                    <li>
+                        <button type="button" 
+                                class="dropdown-item btn-accion-editar" 
+                                data-bs-toggle="modal" 
+                                data-bs-target="#modalEditarPizza"
+                                data-id="@Model.Id"
+                                data-nombre="@Model.Nombre"
+                                data-descripcion="@Model.Descripcion"
+                                data-precio="@Model.Precio.ToString("0.00", System.Globalization.CultureInfo.InvariantCulture)"
+                                data-imagen-url="@Model.ImagenUrl">
+                            ✏️ Editar Parámetros
+                        </button>
+                    </li>
+                    <li><hr class="dropdown-divider border-secondary my-1"></li>
+                    <li>
+                        <button type="button" 
+                                class="dropdown-item text-danger btn-accion-eliminar"
+                                data-bs-toggle="modal" 
+                                data-bs-target="#modalEliminarPizza"
+                                data-id="@Model.Id"
+                                data-nombre="@Model.Nombre">
+                            🗑️ Dar de Baja
+                        </button>
+                    </li>
+                </ul>
+            </div>
         </div>
+        @if (!string.IsNullOrWhiteSpace(Model.ImagenUrl))
+        {
+            <div class="pizza-card-img-wrap">
+                <img src="@Model.ImagenUrl" 
+                     alt="@Model.Nombre" 
+                     class="pizza-card-img" 
+                     loading="lazy" 
+                     onerror="this.closest('.pizza-card-img-wrap').style.display='none';" />
+            </div>
+        }
         <div class="pizza-card-body">
             <h3 class="pizza-card-title">@Model.Nombre</h3>
             <p class="pizza-card-description">@Model.Descripcion</p>

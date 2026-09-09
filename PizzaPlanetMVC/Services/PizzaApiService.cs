@@ -40,4 +40,46 @@ public class PizzaApiService : IPizzaApiService
             return null;
         }
     }
+
+    public async Task<bool> CrearPizzaAsync(CrearPizzaDto dto, CancellationToken cancellationToken = default)
+    {
+        try
+        {
+            var response = await _httpClient.PostAsJsonAsync("/pizzas", dto, cancellationToken);
+            return response.IsSuccessStatusCode;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error al crear la pizza de forma asíncrona mediante la API.");
+            return false;
+        }
+    }
+
+    public async Task<bool> ActualizarPizzaAsync(int id, ActualizarPizzaDto dto, CancellationToken cancellationToken = default)
+    {
+        try
+        {
+            var response = await _httpClient.PutAsJsonAsync($"/pizzas/{id}", dto, cancellationToken);
+            return response.IsSuccessStatusCode;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error al actualizar la pizza con id {Id} de forma asíncrona mediante la API.", id);
+            return false;
+        }
+    }
+
+    public async Task<bool> EliminarPizzaAsync(int id, CancellationToken cancellationToken = default)
+    {
+        try
+        {
+            var response = await _httpClient.DeleteAsync($"/pizzas/{id}", cancellationToken);
+            return response.IsSuccessStatusCode;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error al eliminar la pizza con id {Id} de forma asíncrona mediante la API.", id);
+            return false;
+        }
+    }
 }
