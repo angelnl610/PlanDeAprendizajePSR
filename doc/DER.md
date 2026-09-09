@@ -31,6 +31,7 @@ erDiagram
         varchar Nombre
         varchar Descripcion
         decimal Precio
+        varchar ImagenUrl
     }
 
     

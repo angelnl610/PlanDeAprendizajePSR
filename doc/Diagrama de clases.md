@@ -32,6 +32,7 @@ class Pizza{
     +Nombre : string
     +Descripcion : string
     +Precio : decimal
+    +ImagenUrl : string?
 }
 
 class EstadoPedido{
