@@ -41,14 +41,17 @@ obj/x86/
 [Aa][Rr][Mm]/
 [Aa][Rr][Mm]64/
 [Aa][Rr][Mm]64[Ee][Cc]/
-bld/
+# Build results on 'Bin' and 'Obj' directories
+bin/
+obj/
+**/bin/
+**/obj/
+[Bb]in/
 [Oo]bj/
-[Oo]ut/
-[Ll]og/
-[Ll]ogs/
-
-# Build results on 'Bin' directories
+**/[Bb]in/
+**/[Oo]bj/
 **/[Bb]in/*
+**/[Oo]bj/*
 # Uncomment if you have tasks that rely on *.refresh files to move binaries
 # (https://github.com/github/gitignore/pull/3736)
 #!**/[Bb]in/*.refresh
@@ -291,10 +294,13 @@ UpgradeLog*.htm
 ServiceFabricBackup/
 *.rptproj.bak
 
-# SQL Server files
+# SQL Server & SQLite files
 *.mdf
 *.ldf
 *.ndf
+*.db
+*.db-shm
+*.db-wal
 
 # Business Intelligence projects
 *.rdl.data
