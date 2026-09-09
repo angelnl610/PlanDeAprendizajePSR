@@ -21,6 +21,10 @@ public class PizzaConfig : IEntityTypeConfiguration<Pizza>
         builder.Property(p => p.Precio)
             .HasPrecision(10, 2);
 
+        builder.Property(p => p.ImagenUrl)
+            .HasMaxLength(500)
+            .IsRequired(false);
+
         builder.HasMany(p => p.ItemsPedido)
             .WithOne(i => i.Pizza)
             .HasForeignKey(i => i.PizzaId);

@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using PizzaPlanetaApi.Datos;
 
@@ -11,9 +12,11 @@ using PizzaPlanetaApi.Datos;
 namespace PizzaPlanetaApi.Migrations
 {
     [DbContext(typeof(PizzeriaDbContext))]
-    partial class PizzeriaDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260909205239_AgregarImagenUrlAPizza")]
+    partial class AgregarImagenUrlAPizza
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

@@ -1,5 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using PizzaPlanetaApi.Datos;
+using PizzaPlanetaBiblioteca.DTOs.Pizzas;
+using PizzaPlanetaBiblioteca.Entidades;
 
 namespace PizzaPlanetaApi.Endpoints;
 
@@ -19,7 +21,8 @@ public static class PizzaEndpoints
                     Id = p.Id,
                     Nombre = p.Nombre,
                     Descripcion = p.Descripcion,
-                    Precio = p.Precio
+                    Precio = p.Precio,
+                    ImagenUrl = p.ImagenUrl
                 })
                 .ToListAsync();
 
@@ -36,7 +39,8 @@ public static class PizzaEndpoints
                     Id = p.Id,
                     Nombre = p.Nombre,
                     Descripcion = p.Descripcion,
-                    Precio = p.Precio
+                    Precio = p.Precio,
+                    ImagenUrl = p.ImagenUrl
                 })
                 .FirstOrDefaultAsync();
 
@@ -52,14 +56,24 @@ public static class PizzaEndpoints
             {
                 Nombre = dto.Nombre,
                 Descripcion = dto.Descripcion,
-                Precio = dto.Precio
+                Precio = dto.Precio,
+                ImagenUrl = dto.ImagenUrl
             };
 
             db.Pizzas.Add(pizza);
 
             await db.SaveChangesAsync();
 
-            return Results.Created($"/pizzas/{pizza.Id}", pizza);
+            var pizzaDto = new PizzaDto
+            {
+                Id = pizza.Id,
+                Nombre = pizza.Nombre,
+                Descripcion = pizza.Descripcion,
+                Precio = pizza.Precio,
+                ImagenUrl = pizza.ImagenUrl
+            };
+
+            return Results.Created($"/pizzas/{pizza.Id}", pizzaDto);
         });
 
         // Actualizar
@@ -73,6 +87,7 @@ public static class PizzaEndpoints
             pizza.Nombre = dto.Nombre;
             pizza.Descripcion = dto.Descripcion;
             pizza.Precio = dto.Precio;
+            pizza.ImagenUrl = dto.ImagenUrl;
 
             await db.SaveChangesAsync();
 

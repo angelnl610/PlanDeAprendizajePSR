@@ -10,5 +10,7 @@ public class Pizza
 
     public decimal Precio { get; set; }
 
+    public string? ImagenUrl { get; set; }
+
     public ICollection<ItemPedido> ItemsPedido { get; set; } = new List<ItemPedido>();
 }
