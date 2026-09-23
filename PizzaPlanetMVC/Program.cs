@@ -1,6 +1,10 @@
+using System.Globalization;
 using PizzaPlanetMVC.Services;
 
 var builder = WebApplication.CreateBuilder(args);
+
+CultureInfo.DefaultThreadCurrentCulture = CultureInfo.GetCultureInfo("en-US");
+CultureInfo.DefaultThreadCurrentUICulture = CultureInfo.GetCultureInfo("en-US");
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
