@@ -5,11 +5,9 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 
-var apiBaseUrl = builder.Configuration["PizzaApi:BaseUrl"] ?? "http://localhost:5272";
 builder.Services.AddHttpClient<IPizzaApiService, PizzaApiService>(client =>
 {
-    client.BaseAddress = new Uri(apiBaseUrl);
-    client.Timeout = TimeSpan.FromSeconds(10);
+    client.BaseAddress = new Uri("http://localhost:5272");
 });
 
 var app = builder.Build();
