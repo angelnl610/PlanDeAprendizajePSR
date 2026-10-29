@@ -1,6 +1,6 @@
 using PizzaPlanetaBiblioteca.DTOs.Pizzas;
 
-namespace PizzaPlanetMVC.Services;
+namespace PizzaPlanetServicios.Services;
 
 public interface IPizzaApiService
 {

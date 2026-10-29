@@ -2,6 +2,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\PizzaPlanetBiblioteca\PizzaPlanetBiblioteca.csproj" />
+    <ProjectReference Include="..\PizzaPlanetServicios\PizzaPlanetServicios.csproj" />
   </ItemGroup>
 
   <PropertyGroup>

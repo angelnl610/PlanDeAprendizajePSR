@@ -1,7 +1,8 @@
 using System.Net.Http.Json;
+using Microsoft.Extensions.Logging;
 using PizzaPlanetaBiblioteca.DTOs.Pizzas;
 
-namespace PizzaPlanetMVC.Services;
+namespace PizzaPlanetServicios.Services;
 
 public class PizzaApiService : IPizzaApiService
 {
