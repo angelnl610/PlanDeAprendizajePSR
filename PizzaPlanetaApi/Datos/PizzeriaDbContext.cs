@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using PizzaPlanetaBiblioteca.Entidades;
 
 namespace PizzaPlanetaApi.Datos;
 
@@ -9,7 +10,7 @@ public class PizzeriaDbContext : DbContext
     {
     }
 
-    public DbSet<Cliente> Clientes => Set<Cliente>();
+    public DbSet<Usuario> Usuarios => Set<Usuario>();
     public DbSet<Pizza> Pizzas => Set<Pizza>();
     public DbSet<Pedido> Pedidos => Set<Pedido>();
     public DbSet<ItemPedido> ItemsPedido => Set<ItemPedido>();
@@ -17,7 +18,6 @@ public class PizzeriaDbContext : DbContext
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.ApplyConfigurationsFromAssembly(typeof(PizzeriaDbContext).Assembly);
-
         base.OnModelCreating(modelBuilder);
     }
 }

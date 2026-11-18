@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using PizzaPlanetaBiblioteca.Entidades;
 
 namespace PizzaPlanetaApi.Datos.Config;
 
@@ -19,6 +20,10 @@ public class PedidoConfig : IEntityTypeConfiguration<Pedido>
 
         builder.Property(p => p.Estado)
             .HasConversion<string>();
+
+        builder.HasOne(p => p.Usuario)
+            .WithMany(u => u.Pedidos)
+            .HasForeignKey(p => p.UsuarioId);
 
         builder.HasMany(p => p.ItemsPedido)
             .WithOne(i => i.Pedido)

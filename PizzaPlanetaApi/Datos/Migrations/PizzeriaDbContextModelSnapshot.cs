@@ -22,34 +22,6 @@ namespace PizzaPlanetaApi.Migrations
 
             MySqlModelBuilderExtensions.AutoIncrementColumns(modelBuilder);
 
-            modelBuilder.Entity("PizzaPlanetaBiblioteca.Entidades.Cliente", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("Direccion")
-                        .IsRequired()
-                        .HasMaxLength(200)
-                        .HasColumnType("varchar(200)");
-
-                    b.Property<string>("Nombre")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("varchar(100)");
-
-                    b.Property<string>("Telefono")
-                        .IsRequired()
-                        .HasMaxLength(20)
-                        .HasColumnType("varchar(20)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Clientes", (string)null);
-                });
-
             modelBuilder.Entity("PizzaPlanetaBiblioteca.Entidades.ItemPedido", b =>
                 {
                     b.Property<int>("Id")
@@ -88,9 +60,6 @@ namespace PizzaPlanetaApi.Migrations
 
                     MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<int>("ClienteId")
-                        .HasColumnType("int");
-
                     b.Property<string>("Estado")
                         .IsRequired()
                         .HasColumnType("longtext");
@@ -102,9 +71,12 @@ namespace PizzaPlanetaApi.Migrations
                         .HasPrecision(10, 2)
                         .HasColumnType("decimal(10,2)");
 
+                    b.Property<int>("UsuarioId")
+                        .HasColumnType("int");
+
                     b.HasKey("Id");
 
-                    b.HasIndex("ClienteId");
+                    b.HasIndex("UsuarioId");
 
                     b.ToTable("Pedidos", (string)null);
                 });
@@ -116,6 +88,11 @@ namespace PizzaPlanetaApi.Migrations
                         .HasColumnType("int");
 
                     MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<bool>("Activa")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("tinyint(1)")
+                        .HasDefaultValue(true);
 
                     b.Property<string>("Descripcion")
                         .IsRequired()
@@ -140,6 +117,50 @@ namespace PizzaPlanetaApi.Migrations
                     b.ToTable("Pizzas", (string)null);
                 });
 
+            modelBuilder.Entity("PizzaPlanetaBiblioteca.Entidades.Usuario", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Direccion")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("varchar(200)");
+
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasMaxLength(150)
+                        .HasColumnType("varchar(150)");
+
+                    b.Property<string>("Nombre")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("varchar(100)");
+
+                    b.Property<string>("PasswordHash")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("Rol")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("Telefono")
+                        .IsRequired()
+                        .HasMaxLength(30)
+                        .HasColumnType("varchar(30)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Email")
+                        .IsUnique();
+
+                    b.ToTable("Usuarios", (string)null);
+                });
+
             modelBuilder.Entity("PizzaPlanetaBiblioteca.Entidades.ItemPedido", b =>
                 {
                     b.HasOne("PizzaPlanetaBiblioteca.Entidades.Pedido", "Pedido")
@@ -161,18 +182,13 @@ namespace PizzaPlanetaApi.Migrations
 
             modelBuilder.Entity("PizzaPlanetaBiblioteca.Entidades.Pedido", b =>
                 {
-                    b.HasOne("PizzaPlanetaBiblioteca.Entidades.Cliente", "Cliente")
+                    b.HasOne("PizzaPlanetaBiblioteca.Entidades.Usuario", "Usuario")
                         .WithMany("Pedidos")
-                        .HasForeignKey("ClienteId")
+                        .HasForeignKey("UsuarioId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Cliente");
-                });
-
-            modelBuilder.Entity("PizzaPlanetaBiblioteca.Entidades.Cliente", b =>
-                {
-                    b.Navigation("Pedidos");
+                    b.Navigation("Usuario");
                 });
 
             modelBuilder.Entity("PizzaPlanetaBiblioteca.Entidades.Pedido", b =>
@@ -183,6 +199,11 @@ namespace PizzaPlanetaApi.Migrations
             modelBuilder.Entity("PizzaPlanetaBiblioteca.Entidades.Pizza", b =>
                 {
                     b.Navigation("ItemsPedido");
+                });
+
+            modelBuilder.Entity("PizzaPlanetaBiblioteca.Entidades.Usuario", b =>
+                {
+                    b.Navigation("Pedidos");
                 });
 #pragma warning restore 612, 618
         }

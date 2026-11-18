@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using PizzaPlanetaBiblioteca.Entidades;
 
 namespace PizzaPlanetaApi.Datos.Config;
 
@@ -24,6 +25,11 @@ public class PizzaConfig : IEntityTypeConfiguration<Pizza>
         builder.Property(p => p.ImagenUrl)
             .HasMaxLength(500)
             .IsRequired(false);
+
+        builder.Property(p => p.Activa)
+            .HasDefaultValue(true);
+
+        builder.HasQueryFilter(p => p.Activa);
 
         builder.HasMany(p => p.ItemsPedido)
             .WithOne(i => i.Pizza)
