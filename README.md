@@ -1,247 +1,182 @@
 <h1 align="center">E.T. Nº12 D.E. 1º "Libertador Gral. José de San Martín"</h1>
 
 <p align="center">
-  <img src="https://et12.edu.ar/imgs/computacion/VamoAProgramaBanner.png">
+  <img src="https://et12.edu.ar/imgs/computacion/VamoAProgramaBanner.png" alt="Banner ET12">
 </p>
 
-# PizzaPlaneta API 🍕
+# Pizza Planeta 🍕🚀
+### "Tu app pide una pizza... y la API se la entrega"
 
-API REST desarrollada para la gestión de una pizzería.
+Sistema distribuido full-stack Cliente-Servidor para la gestión integral de una pizzería moderna, desarrollado con **.NET 10**, arquitectura en capas, autenticación híbrida (JWT Bearer + Cookies), control de acceso basado en roles (RBAC) y simulación automatizada del ciclo de vida del pedido.
 
-El sistema permite administrar clientes, pizzas y pedidos, utilizando una arquitectura basada en ASP.NET Core Minimal API, Entity Framework Core y MySQL.
+---
 
-## Comenzando 🚀
+## 🏗️ Arquitectura de la Solución
 
-Para utilizar este proyecto se debe clonar el repositorio y configurar las dependencias necesarias.
+El repositorio está organizado como una solución de múltiples proyectos desacoplados:
 
-Clonar el repositorio desde Github Desktop o ejecutar en la terminal:
+```text
+PlanDeAprendizajePSR/
+├── PizzaPlanetBiblioteca/      # Capa de Dominio Compartida (Entidades, DTOs, Enums, Contratos IServices)
+├── PizzaPlanetaApi/            # Servidor Backend: Minimal API REST (.NET 10, EF Core, MySQL, JWT, Scalar)
+├── PizzaPlanetServicios/       # Capa de Integración HTTP (Typed HttpClient + propagación de JWT)
+├── PizzaPlanetMVC/             # Cliente Frontend: ASP.NET Core MVC (Razor, Cookies, Bootstrap 5)
+├── scripts/                    # Harnesses de verificación E2E y orquestador demo con Cloudflare
+├── doc/                        # Guías de despliegue y documentación de túneles
+└── DOCS_INFORME_TECNICO.md     # Informe Técnico Completo (UML, DER, Casos de Uso, Secuencias)
+```
 
+---
+
+## ✨ Características Principales
+
+1. **Arquitectura Cliente-Servidor Desacoplada:**
+   - La API (`PizzaPlanetaApi`) expone endpoints REST puros con autenticación **JWT Bearer** y documentación interactiva vía **Scalar OpenAPI**.
+   - El cliente Web (`PizzaPlanetMVC`) implementa el patrón MVC tradicional, gestionando sesiones de usuario mediante **Cookies de Autenticación** y delegando la lógica a través de `PizzaPlanetServicios`.
+
+2. **Control de Acceso Basado en Roles (RBAC):**
+   - **Cliente:** Consulta de catálogo interactivo, creación de pedidos con carrito dinámico, visualización de pedidos propios y seguimiento de estado en tiempo real.
+   - **Cocinero:** Tablero de pedidos de la cocina, actualización de estados del pedido.
+   - **Administrador:** Panel de administración global, CRUD completo de pizzas y gestión de usuarios/roles.
+
+3. **Ciclo de Vida de Pedido Autónomo:**
+   - Progresión de estados: `Pendiente` (espera de confirmación) ➔ `EnPreparacion` ➔ `EnCamino` (en viaje) ➔ `Entregado` (o `Cancelado`).
+   - Tarea en segundo plano con progresión temporal automatizada en intervalos de 5 segundos para demostraciones en vivo.
+
+4. **Validaciones Multicapa:**
+   - Validaciones en frontend (HTML5/JS), Data Annotations en DTOs y ViewModels, reglas de negocio en servicios y restricciones de integridad relacional en MySQL.
+
+---
+
+## 🛠️ Tecnologías y Herramientas
+
+- **Framework:** .NET 10 SDK (C# 13)
+- **Backend API:** ASP.NET Core Minimal API
+- **Frontend MVC:** ASP.NET Core MVC, Razor Views, Bootstrap 5, Bootstrap Icons
+- **Persistencia & ORM:** Entity Framework Core 9 / Pomelo MySQL Provider
+- **Base de Datos:** MySQL Server 8.0+
+- **Seguridad:** JWT (JSON Web Tokens) con BCrypt / Cookie Authentication
+- **Documentación API:** Scalar OpenAPI (`/scalar/v1`)
+- **Túneles & Exposición:** Cloudflare Quick Tunnels (`scripts/run-demo.sh`)
+
+---
+
+## 🚀 Puesta en Marcha Rápida
+
+### Pre-requisitos
+- [.NET SDK 10](https://dotnet.microsoft.com/download)
+- MySQL Server 8.0 o superior en ejecución (`localhost:3306`)
+
+### 1. Clonar el repositorio
 ```bash
 git clone https://github.com/angelnl610/PlanDeAprendizajePSR.git
+cd PlanDeAprendizajePSR
 ```
 
-Ingresar al directorio del proyecto:
-
-```bash
-cd PizzaPlanetaApi
-```
-
----
-
-# Relevamiento 👓
-
-PizzaPlaneta es una API REST orientada a la gestión de una pizzería.
-
-Permite realizar operaciones sobre:
-
-- Clientes.
-- Pizzas.
-- Pedidos.
-
-Los pedidos pertenecen a un cliente y están formados por uno o más productos mediante la entidad `ItemPedido`.
-
-Cada elemento del pedido almacena la cantidad solicitada y el precio de la pizza al momento de realizar la compra.
-
-El estado del pedido permite controlar su ciclo de vida:
-
-- Pendiente.
-- En preparación.
-- En camino.
-- Entregado.
-- Cancelado.
-
----
-
-# Pre-requisitos 📋
-
-Antes de ejecutar el proyecto se necesita tener instalado:
-
-- .NET SDK 10.
-- MySQL Server 8.0 o superior.
-
-Para comprobar la instalación de .NET:
-
-```bash
-dotnet --version
-```
-
----
-
-# Tecnologías utilizadas 🛠️
-
-- ASP.NET Core Minimal API
-- Entity Framework Core
-- MySQL
-- Pomelo.EntityFrameworkCore.MySql
-- Swagger / OpenAPI
-
----
-
-# Instalación 🔧
-
-## Configuración de Base de Datos 🐬
-
-La aplicación utiliza **MySQL** como sistema gestor de base de datos y **Entity Framework Core** para administrar la estructura de la misma mediante migraciones.
-
-Antes de ejecutar el proyecto se debe configurar la cadena de conexión ubicada en:
-
-```
-appsettings.json
-```
-
-Modificar los valores según la configuración local de MySQL:
-
+### 2. Configurar Base de Datos
+En `PizzaPlanetaApi/appsettings.json`, verificar o actualizar la cadena de conexión:
 ```json
 "ConnectionStrings": {
-    "PizzeriaDb": "server=localhost;port=3306;database=PizzaPlanetaDb;user=ElUsuario;password=LaContraseña;"
+  "PizzeriaDb": "server=localhost;port=3306;database=PizzaPlanetaDb;user=root;password=tu_contraseña;"
 }
 ```
 
-## Migraciones Entity Framework Core 🔄
-
-La base de datos y sus tablas se generan automáticamente utilizando migraciones de Entity Framework Core.
-
-Desde la terminal, ubicado en el directorio raíz del proyecto, ejecutar:
-
+### 3. Aplicar Migraciones y Carga Inicial (Seeder)
 ```bash
-dotnet ef database update
+dotnet ef database update --project PizzaPlanetaApi
 ```
+> **Nota:** Al iniciar la API, el `DbSeeder` creará automáticamente el catálogo inicial de pizzas y los usuarios de prueba si la base de datos está vacía.
 
-Este comando creará la base de datos configurada y las tablas necesarias:
+### 4. Credenciales de Prueba por Rol
 
-- Clientes
-- Pizzas
-- Pedidos
-- ItemsPedido
-
-En caso de ser necesario generar una nueva migración:
-
-```bash
-dotnet ef migrations add InitialCreate
-```
-
-## Instalación de dependencias
-
-Desde la carpeta raíz del proyecto ejecutar:
-
-```bash
-dotnet restore
-```
+| Rol | Email | Contraseña | Permisos |
+|---|---|---|---|
+| **Administrador** | `admin@pizzaplaneta.com` | `Admin123!` | CRUD Pizzas, Usuarios, Pedidos |
+| **Cocinero** | `cocinero@pizzaplaneta.com` | `Cocinero123!` | Ver y actualizar estado de pedidos |
+| **Cliente** | `cliente@pizzaplaneta.com` | `Cliente123!` | Crear pedidos, ver mis pedidos |
 
 ---
 
-# Despliegue 📦
+## 📦 Ejecución de la Solución
 
-Para ejecutar la API:
+### Opción A: Ejecución Manual en Terminales Separadas
 
-Compilar el proyecto:
-
+**Terminal 1 — API Backend:**
 ```bash
-dotnet build
-```
-
-Ejecutar:
-
-```bash
+cd PizzaPlanetaApi
 dotnet run
+# Escucha en: http://localhost:5272
+# Documentación Scalar: http://localhost:5272/scalar/v1
 ```
 
-La API quedará disponible en la dirección indicada por la consola.
-
-Ejemplo:
-
-```
-http://localhost:5000
-```
-
----
-
-# Swagger 📚
-
-La API incluye documentación interactiva mediante Swagger.
-
-Luego de iniciar el proyecto acceder desde el navegador:
-
-```
-http://localhost:PUERTO/swagger
+**Terminal 2 — Cliente MVC:**
+```bash
+cd PizzaPlanetMVC
+dotnet run
+# Escucha en: http://localhost:5278
 ```
 
-Desde Swagger se pueden probar todos los endpoints disponibles.
+### Opción B: Orquestador Automático con Cloudflare (Demo Pública)
+Si dispones de `cloudflared` instalado:
+```bash
+./scripts/run-demo.sh
+```
+Iniciará automáticamente la API, el MVC y generará URLs públicas seguras HTTPS sin costos de infraestructura. Consulta la [Guía de Despliegue](doc/GUIA_DEPLOYMENT.md).
 
 ---
 
-# Endpoints 🌐
+## 🧪 Pruebas Automatizadas y Scripts de Verificación
 
-## Clientes
+En la carpeta `scripts/` se incluyen suites completas de verificación E2E sin intervención manual:
+- `scripts/verify-api-auth.sh`: Pruebas de registro, login JWT y permisos RBAC en la API.
+- `scripts/verify-order-lifecycle.sh`: Validación de la progresión temporal de pedidos.
+- `scripts/verify-pizza-roles.sh`: Verificación de protección de endpoints CRUD de pizzas.
+- `scripts/verify-mvc-ui.sh`: Flujos de autenticación e interfaz web por cookies.
+- `scripts/verify-mvc-multi-order.sh`: Pruebas de concurrencia y múltiples pedidos.
 
-| Método | Endpoint | Descripción |
-|---|---|---|
-| GET | /clientes | Obtener todos los clientes |
-| GET | /clientes/{id} | Obtener cliente por ID |
-| POST | /clientes | Crear cliente |
-| PUT | /clientes/{id} | Actualizar cliente |
-| DELETE | /clientes/{id} | Eliminar cliente |
-
----
-
-## Pizzas
-
-| Método | Endpoint | Descripción |
-|---|---|---|
-| GET | /pizzas | Obtener todas las pizzas |
-| GET | /pizzas/{id} | Obtener pizza por ID |
-| POST | /pizzas | Crear pizza |
-| PUT | /pizzas/{id} | Actualizar pizza |
-| DELETE | /pizzas/{id} | Eliminar pizza |
+Para ejecutarlos:
+```bash
+chmod +x scripts/*.sh
+./scripts/verify-api-auth.sh
+```
 
 ---
 
-## Pedidos
+## 🌐 Endpoints Principales de la API
 
-| Método | Endpoint | Descripción |
-|---|---|---|
-| GET | /pedidos | Obtener todos los pedidos |
-| GET | /pedidos/{id} | Obtener pedido por ID |
-| POST | /pedidos | Crear pedido |
-| PUT | /pedidos/{id}/estado | Actualizar estado del pedido |
-| DELETE | /pedidos/{id} | Eliminar pedido |
+### Autenticación (`/auth`)
+- `POST /auth/login`: Autentica credenciales y genera token JWT.
+- `POST /auth/registro`: Registra un nuevo usuario con rol Cliente.
 
----
+### Usuarios (`/usuarios`) — [Admin]
+- `GET /usuarios`: Listar todos los usuarios.
+- `PUT /usuarios/{id}/rol`: Modificar el rol de un usuario.
 
-# Reglas de negocio 📌
+### Pizzas (`/pizzas`)
+- `GET /pizzas`: Catálogo público de pizzas.
+- `GET /pizzas/{id}`: Detalle de una pizza.
+- `POST /pizzas`: Crear pizza `[Admin]`.
+- `PUT /pizzas/{id}`: Actualizar pizza `[Admin]`.
+- `DELETE /pizzas/{id}`: Eliminar pizza `[Admin]`.
 
-- Un pedido debe pertenecer a un cliente existente.
-- Un pedido debe contener al menos una pizza.
-- No se pueden agregar pizzas inexistentes a un pedido.
-- El total del pedido se calcula automáticamente.
-- Los pedidos comienzan con estado `Pendiente`.
-- El estado se almacena como texto en la base de datos.
-
----
-
-# Construido con 🛠️
-
-- [Visual Studio Code](https://code.visualstudio.com/)
-- ASP.NET Core
-- Entity Framework Core
-- MySQL
+### Pedidos (`/pedidos`)
+- `GET /pedidos`: Listar pedidos (filtrados por cliente autenticado o todos para `[Cocinero/Admin]`).
+- `GET /pedidos/{id}`: Detalle completo de un pedido con ítems.
+- `POST /pedidos`: Crear nuevo pedido `[Cliente]`.
+- `PUT /pedidos/{id}/estado`: Transición de estado `[Cocinero/Admin]`.
 
 ---
 
-# Versionado 📌
+## 📚 Documentación Técnica Detallada
 
-Se utiliza Git para el control de versiones del proyecto.
-
----
-
-# Autores ✒️
-
-- **Luka Pasandi Dabek y Angel Nahuel Lopez -insert usuarios de github-** - Desarrollo de la API.
+Para consultar el relevamiento formal, especificación de requisitos, diagramas de clases UML, diagramas de casos de uso y diagramas de secuencia completos, consultar:
+👉 **[DOCS_INFORME_TECNICO.md](DOCS_INFORME_TECNICO.md)**
 
 ---
 
-# Licencia 📄
+## ✒️ Autores
 
-Proyecto realizado con fines educativos para la materia Programacion sobre redes.
+* **Luka Pasandi Dabek** — [@PasandiLuka](https://github.com/PasandiLuka)
+* **Angel Nahuel Lopez** — [@angelnl610](https://github.com/angelnl610)
 
-E.T. Nº12 D.E. 1º "Libertador Gral. José de San Martín"
+*Escuela Técnica N.º 12 D.E. 1.º "Libertador Gral. José de San Martín" — Computación*
