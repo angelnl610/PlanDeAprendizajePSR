@@ -9,5 +9,5 @@ public class ItemPedido
     public int PedidoId { get; set; }
     public Pedido Pedido { get; set; } = null!;
     public int PizzaId { get; set; }   
-    public Pizza Pizza { get; set; } = null!;
+    public Pizza? Pizza { get; set; }
 }
