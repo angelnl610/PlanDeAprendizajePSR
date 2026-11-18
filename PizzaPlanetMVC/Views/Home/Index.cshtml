@@ -1,60 +1,8 @@
-@{
-    ViewData["Title"] = "Puesto Galáctico de Pizzas";
+﻿@{
+    ViewData["Title"] = "Home Page";
 }
 
-<!-- ==========================================
-     HERO SECTION
-     ========================================== -->
-<section class="hero-section">
-    <div class="container">
-        <div class="row align-items-center gy-5">
-            <div class="col-lg-7 text-center text-lg-start">
-                <div class="arcade-badge">
-                    <span>🛸</span> SABOR INTERESTELAR DESDE 1982
-                </div>
-                <h1 class="hero-title">
-                    PIZZA<br />PLANETA
-                </h1>
-                <p class="hero-description">
-                    Bienvenido al puesto de comida más salvaje de la galaxia. Nuestras pizzas son horneadas en reactores nucleares y entregadas a velocidad warp. ¡Prepara tus propulsores para la mejor experiencia culinaria cósmica!
-                </p>
-                <div class="hero-buttons justify-content-center justify-content-lg-start">
-                    <a asp-controller="Home" asp-action="Pizzas" class="btn-arcade-primary">
-                        🚀 VER CATÁLOGO DE PIZZAS
-                    </a>
-                    <a href="http://localhost:5272/swagger" target="_blank" class="btn-arcade-outline">
-                        ⚙ SOPORTE DE CONTROL (API)
-                    </a>
-                </div>
-            </div>
-            <div class="col-lg-5">
-                <div class="hero-graphic-container">
-                    <img src="~/images/hero-pizza-planet.png" 
-                         alt="Pizza Planeta Saturn Logo" 
-                         class="hero-planet-img" />
-                </div>
-            </div>
-        </div>
-    </div>
-</section>
-
-<!-- ==========================================
-     HAZARD CAUTION MARQUEE
-     ========================================== -->
-<div class="hazard-ribbon" aria-hidden="true">
-    <div class="hazard-content">
-        <div class="hazard-track">
-            @for (int i = 0; i < 10; i++)
-            {
-                <span class="hazard-item">WARNING: DANGER OF DELICIOUSNESS</span>
-            }
-        </div>
-        <div class="hazard-track">
-            @for (int i = 0; i < 10; i++)
-            {
-                <span class="hazard-item">WARNING: DANGER OF DELICIOUSNESS</span>
-            }
-        </div>
-    </div>
+<div class="text-center">
+    <h1 class="display-4">Welcome</h1>
+    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
 </div>
-</section>

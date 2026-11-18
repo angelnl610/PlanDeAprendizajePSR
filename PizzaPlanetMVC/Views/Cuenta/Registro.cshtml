@@ -1,0 +1,62 @@
+@model PizzaPlanetaBiblioteca.DTOs.RegistroDto
+@{
+    ViewData["Title"] = "Crear Cuenta";
+}
+
+<div class="row justify-content-center mt-4">
+    <div class="col-md-6 col-lg-5">
+        <div class="card shadow-sm border-0">
+            <div class="card-body p-4">
+                <h3 class="card-title text-center mb-4">Registro de Cliente</h3>
+
+                @if (!ViewData.ModelState.IsValid && ViewData.ModelState[string.Empty]?.Errors.Count > 0)
+                {
+                    <div class="alert alert-danger" role="alert">
+                        @foreach (var error in ViewData.ModelState[string.Empty]!.Errors)
+                        {
+                            <div>@error.ErrorMessage</div>
+                        }
+                    </div>
+                }
+
+                <form asp-action="Registro" method="post">
+                    @Html.AntiForgeryToken()
+
+                    <div class="mb-3">
+                        <label asp-for="Nombre" class="form-label">Nombre y Apellido</label>
+                        <input asp-for="Nombre" class="form-control" required placeholder="Ej: Juan Pérez" />
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="Email" class="form-label">Correo Electrónico</label>
+                        <input asp-for="Email" type="email" class="form-control" required placeholder="juan@ejemplo.com" />
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="Password" class="form-label">Contraseña</label>
+                        <input asp-for="Password" type="password" class="form-control" required placeholder="Mínimo 6 caracteres" />
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="Telefono" class="form-label">Teléfono de Contacto</label>
+                        <input asp-for="Telefono" type="tel" class="form-control" placeholder="11-1234-5678" />
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="Direccion" class="form-label">Dirección de Entrega</label>
+                        <input asp-for="Direccion" class="form-control" placeholder="Av. San Martín 1234" />
+                    </div>
+
+                    <div class="d-grid mt-4">
+                        <button type="submit" class="btn btn-success py-2">Registrarme</button>
+                    </div>
+                </form>
+
+                <div class="text-center mt-3">
+                    <span class="text-muted">¿Ya tenés cuenta?</span>
+                    <a asp-action="Login" class="text-decoration-none">Iniciá sesión</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

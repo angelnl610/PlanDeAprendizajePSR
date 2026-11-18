@@ -1,0 +1,137 @@
+@model PizzaPlanetMVC.Models.PedidoCreacionViewModel
+@{
+    ViewData["Title"] = "Nuevo Pedido";
+}
+
+<div class="row justify-content-center mt-4">
+    <div class="col-lg-8">
+        <div class="card shadow-sm border-0">
+            <div class="card-body p-4">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <div>
+                        <h3 class="card-title mb-0">Solicitar Pedido</h3>
+                        <p class="text-muted small mb-0">Seleccioná las pizzas y cantidades que deseás ordenar.</p>
+                    </div>
+                    <a asp-action="Index" class="btn btn-sm btn-outline-secondary">Ver mis pedidos</a>
+                </div>
+
+                @if (!ViewData.ModelState.IsValid && ViewData.ModelState[string.Empty]?.Errors.Count > 0)
+                {
+                    <div class="alert alert-danger" role="alert">
+                        @foreach (var error in ViewData.ModelState[string.Empty]!.Errors)
+                        {
+                            <div>@error.ErrorMessage</div>
+                        }
+                    </div>
+                }
+
+                <form asp-action="Crear" method="post">
+                    @Html.AntiForgeryToken()
+
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle mb-0">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Variedad</th>
+                                    <th class="text-end" style="width: 140px;">Precio Unit.</th>
+                                    <th class="text-center" style="width: 170px;">Cantidad</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @if (Model.Pizzas == null || Model.Pizzas.Count == 0)
+                                {
+                                    <tr>
+                                        <td colspan="3" class="text-center py-4 text-muted">
+                                            No hay variedades de pizza activas disponibles en este momento.
+                                        </td>
+                                    </tr>
+                                }
+                                else
+                                {
+                                    for (int i = 0; i < Model.Pizzas.Count; i++)
+                                    {
+                                        <tr>
+                                            <td>
+                                                <input type="hidden" name="Pizzas[@i].PizzaId" value="@Model.Pizzas[i].PizzaId" />
+                                                <input type="hidden" name="Pizzas[@i].Nombre" value="@Model.Pizzas[i].Nombre" />
+                                                <input type="hidden" name="Pizzas[@i].Precio" value="@Model.Pizzas[i].Precio" />
+                                                <div class="fw-semibold">@Model.Pizzas[i].Nombre</div>
+                                            </td>
+                                            <td class="text-end text-nowrap">
+                                                $@Model.Pizzas[i].Precio.ToString("N2")
+                                            </td>
+                                            <td>
+                                                <div class="input-group input-group-sm justify-content-center">
+                                                    <button type="button" class="btn btn-outline-secondary" onclick="ajustarCantidad(@i, -1)">-</button>
+                                                    <input type="number" 
+                                                           id="cant_@i" 
+                                                           name="Pizzas[@i].Cantidad" 
+                                                           value="@Model.Pizzas[i].Cantidad" 
+                                                           min="0" 
+                                                           max="50" 
+                                                           class="form-control text-center cantidad-input" 
+                                                           data-precio="@Model.Pizzas[i].Precio" 
+                                                           oninput="actualizarTotal()" 
+                                                           style="max-width: 65px;" />
+                                                    <button type="button" class="btn btn-outline-secondary" onclick="ajustarCantidad(@i, 1)">+</button>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    }
+                                }
+                            </tbody>
+                            <tfoot class="table-light">
+                                <tr>
+                                    <td class="fw-bold fs-5">Total Estimado</td>
+                                    <td colspan="2" class="text-end fw-bold fs-5 text-success">
+                                        $<span id="totalEstimado">0,00</span>
+                                    </td>
+                                </tr>
+                            </tfoot>
+                        </table>
+                    </div>
+
+                    <div class="d-flex justify-content-end gap-2 mt-4">
+                        <a asp-controller="Pizzas" asp-action="Index" class="btn btn-secondary">Cancelar</a>
+                        <button type="submit" class="btn btn-success px-4" @(Model.Pizzas?.Count == 0 ? "disabled" : "")>
+                            Confirmar Pedido
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+<script>
+    function ajustarCantidad(index, delta) {
+        const input = document.getElementById('cant_' + index);
+        if (!input) return;
+        let val = parseInt(input.value) || 0;
+        val += delta;
+        if (val < 0) val = 0;
+        if (val > 50) val = 50;
+        input.value = val;
+        actualizarTotal();
+    }
+
+    function actualizarTotal() {
+        let total = 0;
+        const inputs = document.querySelectorAll('.cantidad-input');
+        inputs.forEach(inp => {
+            const cant = parseInt(inp.value) || 0;
+            const precio = parseFloat(inp.getAttribute('data-precio')) || 0;
+            if (cant > 0) {
+                total += cant * precio;
+            }
+        });
+        const el = document.getElementById('totalEstimado');
+        if (el) {
+            el.innerText = total.toLocaleString('es-AR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+        }
+    }
+
+    document.addEventListener('DOMContentLoaded', actualizarTotal);
+</script>
+}

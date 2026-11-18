@@ -1,72 +1,79 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"] - Pizza Planeta</title>
-    
-    <!-- Google Fonts -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;600;700&family=Unbounded:wght@400;600;700;800;900&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-
-    <!-- Bootstrap 5 & Site Styles -->
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    @await RenderSectionAsync("Head", required: false)
 </head>
 <body>
     <header>
-        <nav class="navbar navbar-expand-lg navbar-dark navbar-arcade">
+        <nav class="navbar navbar-expand-lg navbar-light bg-white border-bottom shadow-sm mb-4">
             <div class="container">
-                <a class="navbar-brand brand-arcade d-flex align-items-center gap-2" asp-controller="Home" asp-action="Index">
+                <a class="navbar-brand fw-bold text-danger d-flex align-items-center gap-2" asp-controller="Home" asp-action="Index">
                     <span>🍕</span> PIZZA PLANETA
                 </a>
-                <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navbarArcadeContent" 
-                        aria-controls="navbarArcadeContent" aria-expanded="false" aria-label="Navegación">
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarMain" aria-controls="navbarMain"
+                        aria-expanded="false" aria-label="Navegación">
                     <span class="navbar-toggler-icon"></span>
                 </button>
-                <div class="collapse navbar-collapse justify-content-end" id="#navbarArcadeContent">
-                    <ul class="navbar-nav gap-2">
-                        <li class="nav-item">
-                            <a class="nav-link nav-link-arcade @(ViewContext.RouteData.Values["action"]?.ToString() == "Index" ? "active" : "")" asp-controller="Home" asp-action="Index">
-                                [ INICIO ]
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link nav-link-arcade @(ViewContext.RouteData.Values["action"]?.ToString() == "Pizzas" ? "active" : "")" asp-controller="Home" asp-action="Pizzas">
-                                [ CATÁLOGO DE PIZZAS ]
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link nav-link-arcade text-warning" href="http://localhost:5272/swagger" target="_blank">
-                                [ API REST ]
-                            </a>
-                        </li>
+                <div class="collapse navbar-collapse" id="navbarMain">
+                    <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                        @if (User.Identity?.IsAuthenticated == true)
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link text-dark fw-semibold" asp-controller="Pizzas" asp-action="Index">Catálogo de Pizzas</a>
+                            </li>
+
+                            @if (User.IsInRole("Admin") || User.IsInRole("Cliente"))
+                            {
+                                <li class="nav-item">
+                                    <a class="nav-link text-dark fw-semibold" asp-controller="Pedidos" asp-action="Index">
+                                        @(User.IsInRole("Admin") ? "Gestión de Pedidos" : "Mis Pedidos")
+                                    </a>
+                                </li>
+                            }
+
+                            @if (User.IsInRole("Admin"))
+                            {
+                                <li class="nav-item">
+                                    <a class="nav-link text-danger fw-semibold" asp-controller="Usuarios" asp-action="Index">Usuarios y Roles</a>
+                                </li>
+                            }
+                        }
                     </ul>
+
+                    <div class="d-flex align-items-center gap-3">
+                        @if (User.Identity?.IsAuthenticated == true)
+                        {
+                            <span class="navbar-text small text-muted">
+                                Conectado como: <strong>@User.Identity.Name</strong>
+                                <span class="badge bg-secondary ms-1">@User.FindFirst(System.Security.Claims.ClaimTypes.Role)?.Value</span>
+                            </span>
+                            <a asp-controller="Cuenta" asp-action="Logout" class="btn btn-sm btn-outline-danger">Cerrar Sesión</a>
+                        }
+                        else
+                        {
+                            <a asp-controller="Cuenta" asp-action="Login" class="btn btn-sm btn-outline-primary">Ingresar</a>
+                            <a asp-controller="Cuenta" asp-action="Registro" class="btn btn-sm btn-primary">Registrarse</a>
+                        }
+                    </div>
                 </div>
             </div>
         </nav>
     </header>
 
-    <main role="main">
-        @RenderBody()
-    </main>
+    <div class="container">
+        <main role="main" class="pb-4">
+            @RenderBody()
+        </main>
+    </div>
 
-    <footer class="arcade-footer">
+    <footer class="border-top py-3 text-center text-muted small mt-auto bg-light">
         <div class="container">
-            <div class="row align-items-center gy-3">
-                <div class="col-md-7 text-center text-md-start">
-                    <div class="footer-brand mb-1">PIZZA PLANETA</div>
-                    <div class="footer-copy">
-                        &copy; 1982-2026 PIZZA PLANETA. ALL PROTOCOLS ENFORCED.
-                    </div>
-                </div>
-                <div class="col-md-5 text-center text-md-end">
-                    <span class="insert-coin-prompt">
-                        INSERT COIN TO PLAY [ 0.25$ ]
-                    </span>
-                </div>
-            </div>
+            &copy; 2026 - Pizza Planeta - Programación Sobre Redes (E.T. Nº12 D.E. 1º)
         </div>
     </footer>
 

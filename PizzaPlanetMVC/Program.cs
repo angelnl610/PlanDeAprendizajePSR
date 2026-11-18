@@ -1,18 +1,31 @@
-using System.Globalization;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using PizzaPlanetaBiblioteca.IServices;
 using PizzaPlanetServicios.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
-CultureInfo.DefaultThreadCurrentCulture = CultureInfo.GetCultureInfo("en-US");
-CultureInfo.DefaultThreadCurrentUICulture = CultureInfo.GetCultureInfo("en-US");
-
 // Add services to the container.
 builder.Services.AddControllersWithViews();
+builder.Services.AddHttpContextAccessor();
 
-builder.Services.AddHttpClient<IPizzaApiService, PizzaApiService>(client =>
-{
-    client.BaseAddress = new Uri("http://localhost:5272");
-});
+// Autenticación por Cookies estándar
+builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+    .AddCookie(options =>
+    {
+        options.LoginPath = "/Cuenta/Login";
+        options.LogoutPath = "/Cuenta/Logout";
+        options.AccessDeniedPath = "/Cuenta/AccesoDenegado";
+        options.ExpireTimeSpan = TimeSpan.FromHours(8);
+    });
+
+// Configuración de URL base y servicios HTTP
+var apiBaseUrl = builder.Configuration["ApiSettings:BaseUrl"] ?? "http://localhost:5272";
+var apiUri = new Uri(apiBaseUrl);
+
+builder.Services.AddHttpClient<IAuthService, AuthService>(c => c.BaseAddress = apiUri);
+builder.Services.AddHttpClient<IPizzaService, PizzaService>(c => c.BaseAddress = apiUri);
+builder.Services.AddHttpClient<IPedidoService, PedidoService>(c => c.BaseAddress = apiUri);
+builder.Services.AddHttpClient<IUsuarioService, UsuarioService>(c => c.BaseAddress = apiUri);
 
 var app = builder.Build();
 
@@ -25,8 +38,10 @@ if (!app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();
+
 app.UseRouting();
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapStaticAssets();

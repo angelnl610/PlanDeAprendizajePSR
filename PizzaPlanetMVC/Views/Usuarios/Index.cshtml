@@ -1,0 +1,74 @@
+@model IEnumerable<PizzaPlanetaBiblioteca.DTOs.UsuarioDetalleDto>
+@{
+    ViewData["Title"] = "Panel de Usuarios";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4 mt-3">
+    <div>
+        <h2 class="mb-0">Administración de Usuarios y Roles</h2>
+        <p class="text-muted mb-0">Gestión centralizada del padrón de usuarios y permisos.</p>
+    </div>
+</div>
+
+@if (TempData["MensajeExito"] != null)
+{
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+        @TempData["MensajeExito"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+}
+
+@if (TempData["MensajeError"] != null)
+{
+    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+        @TempData["MensajeError"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+}
+
+<div class="card shadow-sm border-0">
+    <div class="table-responsive">
+        <table class="table table-hover align-middle mb-0">
+            <thead class="table-light">
+                <tr>
+                    <th>ID</th>
+                    <th>Nombre</th>
+                    <th>Email</th>
+                    <th>Teléfono</th>
+                    <th>Dirección</th>
+                    <th>Rol Actual</th>
+                    <th class="text-end" style="min-width: 250px;">Reasignar Rol</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var usuario in Model)
+                {
+                    <tr>
+                        <td class="fw-bold">#@usuario.Id</td>
+                        <td>@usuario.Nombre</td>
+                        <td>@usuario.Email</td>
+                        <td>@(string.IsNullOrEmpty(usuario.Telefono) ? "-" : usuario.Telefono)</td>
+                        <td>@(string.IsNullOrEmpty(usuario.Direccion) ? "-" : usuario.Direccion)</td>
+                        <td>
+                            <span class="badge @(usuario.Rol == RolUsuario.Admin ? "bg-danger" : (usuario.Rol == RolUsuario.Cocinero ? "bg-warning text-dark" : "bg-primary"))">
+                                @usuario.Rol
+                            </span>
+                        </td>
+                        <td class="text-end">
+                            <form asp-action="CambiarRol" method="post" class="d-inline-flex gap-2 justify-content-end align-items-center">
+                                @Html.AntiForgeryToken()
+                                <input type="hidden" name="id" value="@usuario.Id" />
+                                <select name="rol" class="form-select form-select-sm" style="width: auto;">
+                                    <!option value="@RolUsuario.Admin" @(usuario.Rol == RolUsuario.Admin ? "selected" : "")>Admin</!option>
+                                    <!option value="@RolUsuario.Cocinero" @(usuario.Rol == RolUsuario.Cocinero ? "selected" : "")>Cocinero</!option>
+                                    <!option value="@RolUsuario.Cliente" @(usuario.Rol == RolUsuario.Cliente ? "selected" : "")>Cliente</!option>
+                                </select>
+                                <button type="submit" class="btn btn-sm btn-outline-dark">Guardar</button>
+                            </form>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

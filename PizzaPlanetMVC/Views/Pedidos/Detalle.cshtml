@@ -1,0 +1,99 @@
+@model PizzaPlanetaBiblioteca.DTOs.PedidoDetalleDto
+@{
+    ViewData["Title"] = $"Pedido #{Model.Id} - Seguimiento";
+    var esTerminal = Model.Estado == EstadoPedido.Entregado || Model.Estado == EstadoPedido.Cancelado;
+}
+
+@if (!esTerminal)
+{
+    @section Head {
+        <meta http-equiv="refresh" content="5">
+    }
+}
+
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2>Seguimiento de Pedido #@Model.Id</h2>
+            <p class="text-muted mb-0">Registrado el @Model.Fecha.ToString("f")</p>
+        </div>
+        <a asp-action="Index" class="btn btn-outline-secondary">Volver al listado</a>
+    </div>
+
+    <!-- Indicador de Estados -->
+    <div class="card shadow-sm border-0 mb-4">
+        <div class="card-body p-4">
+            <h5 class="card-title mb-3">Estado de la Orden:</h5>
+
+            <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-3">
+                <div class="p-3 text-center rounded flex-fill @(Model.Estado == EstadoPedido.Pendiente ? "bg-primary text-white fw-bold shadow-sm" : "bg-light text-muted")">
+                    <span>1. Pendiente</span>
+                </div>
+                <div class="text-muted">➔</div>
+                <div class="p-3 text-center rounded flex-fill @(Model.Estado == EstadoPedido.EnPreparacion ? "bg-warning text-dark fw-bold shadow-sm" : "bg-light text-muted")">
+                    <span>2. En Preparación</span>
+                </div>
+                <div class="text-muted">➔</div>
+                <div class="p-3 text-center rounded flex-fill @(Model.Estado == EstadoPedido.EnCamino ? "bg-info text-dark fw-bold shadow-sm" : "bg-light text-muted")">
+                    <span>3. En Camino</span>
+                </div>
+                <div class="text-muted">➔</div>
+                <div class="p-3 text-center rounded flex-fill @(Model.Estado == EstadoPedido.Entregado ? "bg-success text-white fw-bold shadow-sm" : "bg-light text-muted")">
+                    <span>4. ¡Entregado!</span>
+                </div>
+            </div>
+
+            @if (!esTerminal)
+            {
+                <div class="alert alert-info py-2 mb-0 d-flex align-items-center gap-2" role="alert">
+                    <div class="spinner-border spinner-border-sm" role="status">
+                        <span class="visually-hidden">Actualizando...</span>
+                    </div>
+                    <span>Actualizando estado automáticamente cada 5 segundos...</span>
+                </div>
+            }
+            else
+            {
+                <div class="alert alert-success py-2 mb-0" role="alert">
+                    ✅ ¡El pedido ha sido completado y entregado con éxito!
+                </div>
+            }
+        </div>
+    </div>
+
+    <!-- Desglose de Items -->
+    <div class="card shadow-sm border-0">
+        <div class="card-body p-4">
+            <h5 class="card-title mb-3">Detalle de Productos</h5>
+            <div class="table-responsive">
+                <table class="table align-middle">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Variedad</th>
+                            <th class="text-center">Cantidad</th>
+                            <th class="text-end">Precio Unitario</th>
+                            <th class="text-end">Subtotal</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model.Items)
+                        {
+                            <tr>
+                                <td class="fw-semibold">@item.PizzaNombre</td>
+                                <td class="text-center">@item.Cantidad</td>
+                                <td class="text-end">$@item.PrecioUnitario.ToString("N2")</td>
+                                <td class="text-end fw-bold">$@item.Subtotal.ToString("N2")</td>
+                            </tr>
+                        }
+                    </tbody>
+                    <tfoot>
+                        <tr class="table-light">
+                            <td colspan="3" class="text-end fw-bold fs-5">Total de la Orden:</td>
+                            <td class="text-end fw-bold fs-5 text-success">$@Model.Total.ToString("N2")</td>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,83 @@
+@model IEnumerable<PizzaPlanetaBiblioteca.DTOs.PedidoDetalleDto>
+@{
+    ViewData["Title"] = "Mis Pedidos";
+    var esAdmin = User.IsInRole("Admin");
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4 mt-3">
+    <div>
+        <h2 class="mb-0">@(esAdmin ? "Gestión Global de Pedidos" : "Mis Pedidos")</h2>
+        <p class="text-muted mb-0">Seguimiento en tiempo real del estado de cocción y entrega.</p>
+    </div>
+    <div>
+        <a asp-action="Crear" class="btn btn-success">+ Nuevo Pedido</a>
+    </div>
+</div>
+
+@if (TempData["MensajeExito"] != null)
+{
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+        @TempData["MensajeExito"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+}
+
+@if (!Model.Any())
+{
+    <div class="alert alert-info text-center my-5" role="alert">
+        No se registran pedidos en este momento.
+    </div>
+}
+else
+{
+    <div class="card shadow-sm border-0">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead class="table-light">
+                    <tr>
+                        <th>N° Pedido</th>
+                        <th>Fecha</th>
+                        @if (esAdmin)
+                        {
+                            <th>Cliente</th>
+                        }
+                        <th>Estado Actual</th>
+                        <th>Total</th>
+                        <th class="text-end">Acción</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var pedido in Model)
+                    {
+                        var badgeClass = pedido.Estado switch
+                        {
+                            EstadoPedido.Pendiente => "bg-secondary",
+                            EstadoPedido.EnPreparacion => "bg-warning text-dark",
+                            EstadoPedido.EnCamino => "bg-info text-dark",
+                            EstadoPedido.Entregado => "bg-success",
+                            _ => "bg-dark"
+                        };
+
+                        <tr>
+                            <td class="fw-bold">#@pedido.Id</td>
+                            <td>@pedido.Fecha.ToString("g")</td>
+                            @if (esAdmin)
+                            {
+                                <td>@pedido.UsuarioNombre</td>
+                            }
+                            <td>
+                                <span class="badge @badgeClass fs-7">@pedido.Estado</span>
+                            </td>
+                            <td class="fw-semibold">$@pedido.Total.ToString("N2")</td>
+                            <td class="text-end">
+                                <a asp-action="Detalle" asp-route-id="@pedido.Id" class="btn btn-sm btn-outline-primary">
+                                    Ver Detalle y Seguimiento
+                                </a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+}

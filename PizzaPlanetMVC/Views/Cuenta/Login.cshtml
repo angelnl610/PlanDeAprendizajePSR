@@ -1,0 +1,56 @@
+@model PizzaPlanetaBiblioteca.DTOs.LoginDto
+@{
+    ViewData["Title"] = "Iniciar Sesión";
+}
+
+<div class="row justify-content-center mt-5">
+    <div class="col-md-5 col-lg-4">
+        <div class="card shadow-sm border-0">
+            <div class="card-body p-4">
+                <h3 class="card-title text-center mb-4">Iniciar Sesión</h3>
+
+                @if (TempData["MensajeExito"] != null)
+                {
+                    <div class="alert alert-success alert-dismissible fade show" role="alert">
+                        @TempData["MensajeExito"]
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                }
+
+                @if (!ViewData.ModelState.IsValid && ViewData.ModelState[string.Empty]?.Errors.Count > 0)
+                {
+                    <div class="alert alert-danger" role="alert" data-testid="error-credenciales">
+                        @foreach (var error in ViewData.ModelState[string.Empty]!.Errors)
+                        {
+                            <div>@error.ErrorMessage</div>
+                        }
+                    </div>
+                }
+
+                <form asp-action="Login" method="post">
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" name="returnUrl" value="@ViewData["ReturnUrl"]" />
+
+                    <div class="mb-3">
+                        <label asp-for="Email" class="form-label">Correo Electrónico</label>
+                        <input asp-for="Email" type="email" class="form-control" required autofocus placeholder="usuario@ejemplo.com" />
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="Password" class="form-label">Contraseña</label>
+                        <input asp-for="Password" type="password" class="form-control" required placeholder="••••••••" />
+                    </div>
+
+                    <div class="d-grid mt-4">
+                        <button type="submit" class="btn btn-primary py-2">Ingresar</button>
+                    </div>
+                </form>
+
+                <div class="text-center mt-3">
+                    <span class="text-muted">¿No tienes cuenta?</span>
+                    <a asp-action="Registro" class="text-decoration-none">Registrate aquí</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,96 @@
+@model IEnumerable<PizzaPlanetaBiblioteca.DTOs.PizzaDetalleDto>
+@{
+    ViewData["Title"] = "Catálogo de Pizzas";
+    var esAdminOCocinero = User.IsInRole("Admin") || User.IsInRole("Cocinero");
+    var esCliente = User.IsInRole("Cliente");
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4 mt-3">
+    <div>
+        <h2 class="mb-0">Catálogo de Pizzas</h2>
+        <p class="text-muted mb-0">Seleccioná tus variedades favoritas o gestioná el menú.</p>
+    </div>
+    @if (esAdminOCocinero)
+    {
+        <div>
+            <a asp-action="Crear" class="btn btn-primary">+ Nueva Pizza</a>
+        </div>
+    }
+</div>
+
+@if (TempData["MensajeExito"] != null)
+{
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+        @TempData["MensajeExito"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+}
+
+@if (TempData["MensajeError"] != null)
+{
+    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+        @TempData["MensajeError"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+}
+
+@if (!Model.Any())
+{
+    <div class="alert alert-warning text-center my-5" role="alert">
+        No hay pizzas activas en el catálogo en este momento.
+    </div>
+}
+else
+{
+    <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+        @foreach (var pizza in Model)
+        {
+            <div class="col">
+                <div class="card h-100 shadow-sm border-0">
+                    @if (!string.IsNullOrEmpty(pizza.ImagenUrl))
+                    {
+                        <img src="@pizza.ImagenUrl" class="card-img-top" alt="@pizza.Nombre" style="height: 200px; object-fit: cover;">
+                    }
+                    else
+                    {
+                        <div class="bg-secondary text-white text-center py-5" style="height: 200px;">
+                            <span>Sin Imagen</span>
+                        </div>
+                    }
+
+                    <div class="card-body d-flex flex-column">
+                        <div class="d-flex justify-content-between align-items-start mb-2">
+                            <h5 class="card-title mb-0">@pizza.Nombre</h5>
+                            <span class="badge bg-success fs-6">$@pizza.Precio.ToString("N2")</span>
+                        </div>
+                        <p class="card-text text-muted flex-grow-1">@pizza.Descripcion</p>
+
+                        <div class="mt-3 pt-3 border-top">
+                            @if (esCliente)
+                            {
+                                <a asp-controller="Pedidos" asp-action="Crear" asp-route-pizzaId="@pizza.Id" class="btn btn-outline-primary w-100">
+                                    Pedir esta Pizza
+                                </a>
+                            }
+
+                            @if (esAdminOCocinero)
+                            {
+                                <div class="d-flex gap-2">
+                                    <a asp-action="Editar" asp-route-id="@pizza.Id" class="btn btn-sm btn-outline-secondary flex-grow-1">
+                                        Editar
+                                    </a>
+                                    <form asp-action="Eliminar" asp-route-id="@pizza.Id" method="post" class="flex-grow-1" onsubmit="return confirm('¿Seguro que deseas dar de baja esta pizza?');">
+                                        @Html.AntiForgeryToken()
+                                        <button type="submit" class="btn btn-sm btn-outline-danger w-100">
+                                            Baja (Soft Delete)
+                                        </button>
+                                    </form>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+}
