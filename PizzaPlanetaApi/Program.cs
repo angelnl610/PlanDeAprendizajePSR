@@ -1,10 +1,14 @@
+using System.Text;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 using PizzaPlanetaApi.Datos;
 using PizzaPlanetaApi.Endpoints;
+using Scalar.AspNetCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Connection String
+// Configuración de Base de Datos (MySQL con fallback a SQLite)
 var connectionString = builder.Configuration.GetConnectionString("PizzeriaDb");
 
 builder.Services.AddDbContext<PizzeriaDbContext>(options =>
@@ -34,13 +38,35 @@ builder.Services.AddDbContext<PizzeriaDbContext>(options =>
     }
 });
 
-// Swagger
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+// Configuración de Autenticación JWT Bearer
+var jwtKey = builder.Configuration["Jwt:Key"] ?? "ClaveSecretaSuperSeguraPizzaPlaneta2026!Min32Bytes";
+var keyBytes = Encoding.UTF8.GetBytes(jwtKey);
+
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+    .AddJwtBearer(options =>
+    {
+        options.RequireHttpsMetadata = false;
+        options.SaveToken = true;
+        options.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateIssuerSigningKey = true,
+            IssuerSigningKey = new SymmetricSecurityKey(keyBytes),
+            ValidateIssuer = true,
+            ValidIssuer = builder.Configuration["Jwt:Issuer"] ?? "PizzaPlanetaApi",
+            ValidateAudience = true,
+            ValidAudience = builder.Configuration["Jwt:Audience"] ?? "PizzaPlanetMVC",
+            ClockSkew = TimeSpan.Zero
+        };
+    });
+
+builder.Services.AddAuthorization();
+
+// OpenAPI & Scalar
+builder.Services.AddOpenApi();
 
 var app = builder.Build();
 
-// Inicializar y sembrar datos de prueba en la base de datos
+// Inicializar y sembrar datos de prueba
 using (var scope = app.Services.CreateScope())
 {
     var db = scope.ServiceProvider.GetRequiredService<PizzeriaDbContext>();
@@ -54,27 +80,24 @@ using (var scope = app.Services.CreateScope())
     }
 }
 
-// Swagger
 if (app.Environment.IsDevelopment())
 {
-    app.UseSwagger();
-    app.UseSwaggerUI();
+    app.MapOpenApi();
+    app.MapScalarApiReference(options =>
+    {
+        options.WithTitle("Pizza Planeta API - Documentación Interactiva")
+               .WithTheme(ScalarTheme.Moon);
+    });
+    app.MapGet("/scalar", () => Results.Redirect("/scalar/v1"));
 }
 
-// Endpoints
-app.MapClienteEndpoints();
+app.UseAuthentication();
+app.UseAuthorization();
+
+// Mapeo de Endpoints Modulares
+app.MapAuthEndpoints();
 app.MapPizzaEndpoints();
 app.MapPedidoEndpoints();
-
-app.MapGet("/", () =>
-{
-    return Results.Ok("Pizza Planeta biri biri");
-});
-
-app.MapPost("/seed", (PizzeriaDbContext db) =>
-{
-    DbSeeder.SeedData(db);
-    return Results.Ok(new { mensaje = "Datos seed generados exitosamente." });
-});
+app.MapUsuarioEndpoints();
 
 app.Run();
